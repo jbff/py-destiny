@@ -83,7 +83,11 @@ class EgaRenderer:
         self.canvas.fill((0, 0, 0))
         self._draw_borders()
 
-        if session.ztats_open:
+        if session.story_seq is not None:
+            self._render_story(session)
+        elif session.char_create is not None:
+            self._render_char_create(session)
+        elif session.ztats_open:
             self._render_ztats(session)
         elif session.shop_open:
             self._render_shop(session)
@@ -290,3 +294,49 @@ class EgaRenderer:
             f"{dng.name} L{dng.z + 1} {FACING_NAMES[dng.facing]}",
             EGA_PALETTE[14],
         )
+
+    def _wrap_20(self, text: str) -> list[str]:
+        lines: list[str] = []
+        line = ""
+        for w in text.split():
+            if not line:
+                line = w
+            elif len(line) + 1 + len(w) <= 21:
+                line = f"{line} {w}"
+            else:
+                lines.append(line)
+                line = w
+        if line:
+            lines.append(line)
+        return lines
+
+    def _render_story(self, session: OverworldSession) -> None:
+        seq = session.story_seq
+        if seq is None:
+            return
+        header = "=== VICTORY ===" if session.endgame_won else "=== ULTIMA V ==="
+        self.draw_text(12, 16, header, EGA_PALETTE[14])
+        lines = self._wrap_20(seq.current_text)[:12]
+        for i, ln in enumerate(lines):
+            self.draw_text(12, 32 + i * 10, ln, EGA_PALETTE[15])
+        self.draw_text(12, 160, f"Page {seq.page_idx + 1}/{len(seq.pages)}", EGA_PALETTE[7])
+        self.draw_text(12, 172, "Space:Next Esc:Skip", EGA_PALETTE[11])
+
+    def _render_char_create(self, session: OverworldSession) -> None:
+        cc = session.char_create
+        if cc is None:
+            return
+        self.draw_text(12, 16, "=== CHARACTER ===", EGA_PALETTE[14])
+        p0, p1, p2 = cc.current_prompt()
+        y = 36
+        for ln in self._wrap_20(p0):
+            self.draw_text(12, y, ln, EGA_PALETTE[15])
+            y += 11
+        y += 6
+        for ln in self._wrap_20(p1):
+            self.draw_text(12, y, ln, EGA_PALETTE[11])
+            y += 11
+        y += 6
+        for ln in self._wrap_20(p2):
+            self.draw_text(12, y, ln, EGA_PALETTE[7])
+            y += 11

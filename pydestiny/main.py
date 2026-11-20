@@ -25,6 +25,8 @@ DIR_KEYS = {
 def main() -> None:
     parser = argparse.ArgumentParser(description="PyDestiny — Ultima V Reimplementation")
     parser.add_argument("--save", type=Path, default=Path("save.json"), help="Save file path")
+    parser.add_argument("--intro", action="store_true", help="Start with STORY.DAT intro")
+    parser.add_argument("--new-game", action="store_true", help="Start character creation")
     args = parser.parse_args()
 
     pygame.init()
@@ -33,6 +35,10 @@ def main() -> None:
     clock = pygame.time.Clock()
 
     session = OverworldSession.from_data_dir(save_path=args.save)
+    if args.intro:
+        session.start_intro()
+    elif args.new_game:
+        session.start_char_creation()
     renderer = EgaRenderer()
 
     running = True
@@ -41,6 +47,32 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
+                if session.story_seq is not None:
+                    if event.key == pygame.K_ESCAPE:
+                        session.story_seq.skip()
+                    elif event.key in (pygame.K_SPACE, pygame.K_RETURN):
+                        session.story_seq.advance()
+                    if session.story_seq.finished:
+                        session.story_seq = None
+                    continue
+
+                if session.char_create is not None:
+                    cc = session.char_create
+                    if cc.step == 0:
+                        if event.key == pygame.K_RETURN:
+                            cc.step = 1
+                        elif event.key == pygame.K_BACKSPACE:
+                            cc.name = cc.name[:-1]
+                        elif event.unicode and event.unicode.isprintable() and len(cc.name) < 8:
+                            cc.name += event.unicode
+                    elif cc.step == 1 and event.unicode:
+                        cc.answer_choice(event.unicode)
+                    elif 2 <= cc.step and event.unicode:
+                        cc.answer_choice(event.unicode)
+                    if cc.done:
+                        session.finish_char_creation()
+                    continue
+
                 if session.shop_open:
                     if event.key in (pygame.K_ESCAPE, pygame.K_q):
                         session.shop_open = False
@@ -132,12 +164,16 @@ def main() -> None:
                         session.klimb_dungeon(up=False)
                     elif session.settlement is not None:
                         session.klimb_settlement(up=False)
+                elif event.key == pygame.K_F1 and not session.ztats_open:
+                    session.start_intro()
                 elif event.key == pygame.K_F2 and not session.ztats_open:
                     session.start_combat()
                 elif event.key == pygame.K_F3 and not session.ztats_open and session.dungeon is None:
                     ox, oy = session.tables.location_coords[32]
                     session.save.x, session.save.y = ox, oy
                     session.enter_location()
+                elif event.key == pygame.K_F4 and not session.ztats_open:
+                    session.start_char_creation()
                 elif event.key == pygame.K_z:
                     session.ztats_open = not session.ztats_open
                 elif event.key == pygame.K_q:

@@ -32,6 +32,7 @@ uv run pytest -v
 - **`C`** — Quick-cast *In Lor* (Light)
 - **`K` / `D`** — Climb up / Descend stairs & ladders (settlements & dungeons)
 - **`Z`** — Toggle Party `Z`tats modal
+- **`F1` / `F4`** — Preview Intro (`STORY.DAT`) / Character Creation (`--intro` / `--new-game` CLI flags also supported)
 - **`F2`** — Launch a test tactical combat encounter (`A` + direction to attack)
 - **`F3`** — Enter Dungeon Deceit (3D dungeon test)
 - **`Space`** — Pass turn
@@ -46,7 +47,7 @@ uv run pytest -v
 - [x] **Phase 4: Tactical 11x11 Combat** — `BRIT.CBT` / `DUNGEON.CBT` combat, DEX turn queue, ranged/melee attacks, monster AI, XP/gold, flee/victory
 - [x] **Phase 5: Magic Effects & Shoppes** — Spell effect handlers, per-merchant shoppe menus (`0x81`–`0x88`)
 - [x] **Phase 6: 3D Dungeons** — 8x8x8 toroidal dungeons, `DNG1`–`DNG3` perspective slice rendering, ladders, dungeon room combat
-- [ ] **Phase 7: Title/Intro, Character Creation, Endgame & Polish** — Title/intro sequence, Gypsy virtue questionnaire, Underworld/Shard/Win & Endgame, interactive `M`ix/`C`ast & `Look` polish
+- [x] **Phase 7: Title/Intro, Character Creation, Endgame & Polish** — `STORY.DAT` intro, Gypsy virtue character creation (`QUESTION.DAT`), `END.DAT` victory epilogue, grandfather clock `Look` time display
 
 ## Repository Layout
 

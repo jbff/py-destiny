@@ -13,6 +13,7 @@ from pydestiny.engine.fov import compute_fov
 from pydestiny.engine.karma import KARMA_LOCKPICK_SETTLEMENT, adjust_karma
 from pydestiny.engine.magic_effects import execute_spell
 from pydestiny.engine.movement import is_foot_passable, wrap_world_coord
+from pydestiny.engine.phase7 import CharacterCreationState, StorySequence
 from pydestiny.engine.settlement import SettlementState
 from pydestiny.engine.shoppes import buy_shop_item, get_shop_menu
 from pydestiny.engine.time import advance_time, get_moon_phases, update_darkness
@@ -54,6 +55,9 @@ class OverworldSession:
         self.combat: CombatSession | None = None
         self.talk_session: TalkSession | None = None
         self.talk_input: str = ""
+        self.story_seq: StorySequence | None = None
+        self.char_create: CharacterCreationState | None = None
+        self.endgame_won = False
         self.quit_requested = False
         self.settlement: SettlementState | None = None
         self.dungeon: DungeonSession | None = None
@@ -422,5 +426,32 @@ class OverworldSession:
     def look_at(self, dx: int, dy: int) -> str:
         tile = self.get_tile(self.save.x + dx, self.save.y + dy)
         desc = self.look2[tile] if 0 <= tile < len(self.look2) else f"Tile {tile}"
+        if tile in (0xFA, 0xFB):  # Grandfather clock
+            h12 = self.save.hour % 12 or 12
+            ampm = "AM" if self.save.hour < 12 else "PM"
+            desc = f"{desc.rstrip()} {h12}:{self.save.minute:02d} {ampm}"
         self.log(f"Thou dost see {desc}")
         return desc
+
+    def start_intro(self) -> StorySequence:
+        self.story_seq = StorySequence.load_intro(self.data_dir)
+        return self.story_seq
+
+    def start_char_creation(self) -> CharacterCreationState:
+        self.char_create = CharacterCreationState.load(self.data_dir)
+        return self.char_create
+
+    def finish_char_creation(self) -> None:
+        if self.char_create is not None:
+            self.char_create.apply_to_save(self.save)
+            self.char_create = None
+            self.log(f"Welcome, {self.save.characters[0].name}!")
+
+    def trigger_endgame(self) -> StorySequence:
+        self.endgame_won = True
+        self.dungeon = None
+        self.combat = None
+        self.settlement = None
+        self.story_seq = StorySequence.load_endgame(self.data_dir)
+        self.log("Lord British freed!")
+        return self.story_seq
