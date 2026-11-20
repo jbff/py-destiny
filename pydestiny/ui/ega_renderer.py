@@ -12,7 +12,7 @@ from pydestiny.assets.open_data import DEFAULT_DATA_DIR
 from pydestiny.engine.dungeon_session import FACING_NAMES, is_door_cell, is_wall_cell
 from pydestiny.engine.fov import UNSEEN_TILE
 from pydestiny.engine.overworld_session import AVATAR_TILE_ID, OverworldSession
-from pydestiny.engine.shoppes import DEFAULT_SHOP_MENU
+from pydestiny.engine.shoppes import get_shop_menu
 
 DEFAULT_ASSETS_DIR = Path(__file__).resolve().parent.parent.parent / "assets"
 
@@ -198,9 +198,10 @@ class EgaRenderer:
                     pygame.draw.rect(self.canvas, EGA_PALETTE[14], (px, py, 16, 16), 1)
 
     def _render_shop(self, session: OverworldSession) -> None:
-        self.draw_text(12, 16, "=== SHOPPE MENU ===", EGA_PALETTE[14])
+        title, items = get_shop_menu(session.shop_talk_id)
+        self.draw_text(12, 16, f"=== {title} ===", EGA_PALETTE[14])
         y = 30
-        for i, item in enumerate(DEFAULT_SHOP_MENU):
+        for i, item in enumerate(items):
             self.draw_text(
                 12,
                 y,

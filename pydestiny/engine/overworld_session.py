@@ -14,7 +14,7 @@ from pydestiny.engine.karma import KARMA_LOCKPICK_SETTLEMENT, adjust_karma
 from pydestiny.engine.magic_effects import execute_spell
 from pydestiny.engine.movement import is_foot_passable, wrap_world_coord
 from pydestiny.engine.settlement import SettlementState
-from pydestiny.engine.shoppes import DEFAULT_SHOP_MENU, buy_shop_item
+from pydestiny.engine.shoppes import buy_shop_item, get_shop_menu
 from pydestiny.engine.time import advance_time, get_moon_phases, update_darkness
 from pydestiny.state.savegame import SaveGame
 
@@ -45,7 +45,12 @@ class OverworldSession:
         self.awaiting_look_dir = False
         self.awaiting_talk_dir = False
         self.awaiting_attack_dir = False
+        self.awaiting_jimmy_dir = False
+        self.awaiting_open_dir = False
+        self.awaiting_search_dir = False
         self.shop_open = False
+        self.shop_talk_id = 0
+        self.shop_title = "SHOPPE MENU"
         self.combat: CombatSession | None = None
         self.talk_session: TalkSession | None = None
         self.talk_input: str = ""
@@ -279,8 +284,10 @@ class OverworldSession:
             self.log("Guard: Move along!")
             return False
         if npc.talk_id >= 0x80:
+            self.shop_talk_id = npc.talk_id
+            self.shop_title, _ = get_shop_menu(npc.talk_id)
             self.shop_open = True
-            self.log("Welcome to Shoppe!")
+            self.log(f"Welcome to {self.shop_title}!")
             return True
         dlg = self.settlement.dialogues.get(npc.talk_id)
         if dlg is None:
@@ -335,10 +342,59 @@ class OverworldSession:
                 self.log(m)
             self.combat = None
 
+    def klimb_settlement(self, up: bool = True) -> bool:
+        if self.settlement is None:
+            return False
+        tile = self.settlement.get_tile(self.save.x, self.save.y, self.save.z)
+        if tile not in (0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9):
+            self.log("Not here!")
+            return False
+        if tile == 0xC8 and not up:
+            self.log("Up only!")
+            return False
+        if tile == 0xC9 and up:
+            self.log("Down only!")
+            return False
+        signed_z = self.save.z - 256 if self.save.z >= 0x80 else self.save.z
+        new_z = signed_z + (1 if up else -1)
+        new_map_idx = self.settlement.base_map_idx + new_z
+        if not 0 <= new_map_idx < len(self.settlement.all_maps):
+            self.log("Blocked!")
+            return False
+        self.save.z = new_z & 0xFF
+        self.log(f"Floor {new_z}")
+        return True
+
+    def open_at(self, dx: int, dy: int) -> bool:
+        if self.settlement is None:
+            self.log("Nothing to open!")
+            return False
+        tx, ty = self.save.x + dx, self.save.y + dy
+        tile = self.settlement.get_tile(tx, ty, self.save.z)
+        if tile in (0xB4, 0xB5, 0xB6, 0xB7):  # unlocked door
+            self.settlement.current_floor(self.save.z)[ty][tx] = 0x44
+            self.log("Opened!")
+            return True
+        if tile == 0x8F:  # chest
+            self.settlement.current_floor(self.save.z)[ty][tx] = 0x44
+            self.save.gold += 15
+            self.log("Found 15 gold!")
+            return True
+        if tile in (0xB8, 0xB9, 0x97):
+            self.log("Locked!")
+            return False
+        self.log("Nothing to open!")
+        return False
+
+    def search_at(self, dx: int, dy: int) -> str:
+        desc = self.look_at(dx, dy)
+        return desc
+
     def shop_buy(self, slot_idx: int) -> tuple[bool, str]:
-        if not 0 <= slot_idx < len(DEFAULT_SHOP_MENU):
+        _, items = get_shop_menu(self.shop_talk_id)
+        if not 0 <= slot_idx < len(items):
             return False, "Invalid choice"
-        ok, msg = buy_shop_item(self.save, DEFAULT_SHOP_MENU[slot_idx])
+        ok, msg = buy_shop_item(self.save, items[slot_idx])
         self.log(msg)
         return ok, msg
 

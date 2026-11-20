@@ -125,9 +125,12 @@ class CombatSession:
                 m_idx = default_monster_idx
             elif 0x80 <= mt <= 0xFC:
                 m_idx = 16 + (mt - 0x80) // 4
+            elif 1 <= mt <= 15:
+                m_idx = mt
             else:
                 m_idx = max(16, min(47, mt))
             mdef = tables.monsters[m_idx]
+            tile_id = (320 + m_idx * 4) if m_idx < 16 else (384 + (m_idx - 16) * 4)
             mx, my = int(m_xs[i]) % 11, int(m_ys[i]) % 11
             actors.append(
                 CombatActor(
@@ -142,7 +145,7 @@ class CombatSession:
                     attack=mdef.damage,
                     defense=mdef.armour,
                     attack_range=1,
-                    tile_id=384 + (m_idx - 16) * 4,
+                    tile_id=tile_id,
                     flags=0x40,
                 )
             )

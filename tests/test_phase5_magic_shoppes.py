@@ -54,6 +54,10 @@ class TestPhase5MagicShoppes:
             assert session.save.food == prev_food + 20
             assert session.save.gold == prev_gold - 25
 
+            session.shop_talk_id = 0x82  # Apothecary
+            ok, _ = session.shop_buy(0)  # Ash x5 for 20g
+            assert ok
+
             session.shop_open = True
             renderer = EgaRenderer()
             surf = renderer.render_overworld(session)

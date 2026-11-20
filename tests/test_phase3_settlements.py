@@ -64,6 +64,12 @@ class TestPhase3Settlements:
         assert session.save.location_id == 17
         assert session.settlement is not None
         assert session.settlement.get_tile(15, 30, 0) == 0x44
+        # Climb ladder at (3, 3) up to floor 1 and back down
+        session.save.x, session.save.y = 3, 3
+        assert session.klimb_settlement(up=True)
+        assert session.save.z == 1
+        assert session.klimb_settlement(up=False)
+        assert session.save.z == 0
 
     def test_render_settlement_with_npcs(self) -> None:
         os.environ["SDL_VIDEODRIVER"] = "dummy"

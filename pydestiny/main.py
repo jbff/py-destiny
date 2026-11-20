@@ -86,6 +86,18 @@ def main() -> None:
                     dx, dy = DIR_KEYS[event.key]
                     session.start_talk(dx, dy)
                     session.awaiting_talk_dir = False
+                elif session.awaiting_jimmy_dir and event.key in DIR_KEYS:
+                    dx, dy = DIR_KEYS[event.key]
+                    session.jimmy_door(dx, dy)
+                    session.awaiting_jimmy_dir = False
+                elif session.awaiting_open_dir and event.key in DIR_KEYS:
+                    dx, dy = DIR_KEYS[event.key]
+                    session.open_at(dx, dy)
+                    session.awaiting_open_dir = False
+                elif session.awaiting_search_dir and event.key in DIR_KEYS:
+                    dx, dy = DIR_KEYS[event.key]
+                    session.search_at(dx, dy)
+                    session.awaiting_search_dir = False
                 elif event.key in DIR_KEYS and not session.ztats_open:
                     dx, dy = DIR_KEYS[event.key]
                     session.step_move(dx, dy)
@@ -99,10 +111,27 @@ def main() -> None:
                 elif event.key == pygame.K_l and not session.ztats_open:
                     session.awaiting_look_dir = True
                     session.log("Look-dir?")
-                elif event.key == pygame.K_k and not session.ztats_open and session.dungeon is not None:
-                    session.klimb_dungeon(up=True)
-                elif event.key == pygame.K_d and not session.ztats_open and session.dungeon is not None:
-                    session.klimb_dungeon(up=False)
+                elif event.key == pygame.K_j and not session.ztats_open:
+                    session.awaiting_jimmy_dir = True
+                    session.log("Jimmy-dir?")
+                elif event.key == pygame.K_o and not session.ztats_open:
+                    session.awaiting_open_dir = True
+                    session.log("Open-dir?")
+                elif event.key == pygame.K_s and not session.ztats_open:
+                    session.awaiting_search_dir = True
+                    session.log("Search-dir?")
+                elif event.key == pygame.K_c and not session.ztats_open:
+                    session.cast_spell_quick(0, 0)  # In Lor (Light)
+                elif event.key == pygame.K_k and not session.ztats_open:
+                    if session.dungeon is not None:
+                        session.klimb_dungeon(up=True)
+                    elif session.settlement is not None:
+                        session.klimb_settlement(up=True)
+                elif event.key == pygame.K_d and not session.ztats_open:
+                    if session.dungeon is not None:
+                        session.klimb_dungeon(up=False)
+                    elif session.settlement is not None:
+                        session.klimb_settlement(up=False)
                 elif event.key == pygame.K_F2 and not session.ztats_open:
                     session.start_combat()
                 elif event.key == pygame.K_F3 and not session.ztats_open and session.dungeon is None:
