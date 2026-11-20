@@ -196,6 +196,16 @@ Karma starts at `75` (`INIT.GAM+0x02e2`, `0..99` range) and is adjusted by playe
 - Triggered from `TALK.OVL+0x03d3` when an NPC's dialogue ID is `0xFE` (`254`, merchant/service NPC).
 - Shoppe names (Taverns, Stables, Shipwrights, Herbalists/Alchemists, Guilds, Healers, etc.) live in `DATA.OVL+0x0cb1+`, and shopkeeper dialogue is loaded from `SHOPPE.DAT` (word-compressed with `DATA.OVL+0x24F8` + `0x80`).
 
+## 19. Overworld Cache & `11 x 11` FOV Buffer (`0x0000:0x4402`, `0x5d0a`)
+
+- **Tile Lookup (`0x0000:0x4402(y, x)`)**:
+  - Combat (`location_id >= 0x80`): indexes `DS:0xad14 + (y << 5) + x` (32-byte row stride).
+  - Overworld (`location_id == 0`): indexes a `32 x 32` rolling 4-chunk cache (`4 x 16x16` chunks) anchored at `(DS:[0x589b], DS:[0x589c])` via `(x - origin_x) & 0x1f`, `(y - origin_y) & 0x1f`.
+- **FOV Buffer (`0x0000:0x5d0a`)**:
+  - Initializes the `11 x 11` viewport buffer at `DS:0xab02` (32-byte row stride) to `0xFF` (unseen/occluded).
+  - Centers on `(center_x - 5, center_y - 5)` and fills visible tiles within `light_radius` (`DS:[0x58a5]`).
+
+
 
 
 
