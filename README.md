@@ -20,16 +20,33 @@ Optional flags:
 uv run pytest -v
 ```
 
-## Controls (Current Prototype)
+## Controls
 
-- **Arrow keys / `W` `A` `S` `D`** — Move (walk off settlement edge to exit; walk off combat edge to flee)
-- **`E`** — Enter settlement at current overworld tile (e.g., Britain `(81, 106)`, LB's Castle `(86, 107)`, Moonglow `(232, 135)`)
-- **`T`** + direction — Talk to an adjacent NPC (type `name`, `job`, `bye`, or topic keywords)
+- **Arrow keys / Numpad `8`/`2`/`4`/`6`** — Move (walk off settlement edge to exit; walk off combat edge to flee; in 3D dungeons: Up/Down moves, Left/Right turns)
+- **`E`** — Enter settlement or dungeon at current overworld tile (e.g., Britain `(81, 106)`, LB's Castle `(86, 107)`, Moonglow `(232, 135)`)
+- **`T`** + direction — Talk to an adjacent NPC or open a merchant shoppe
 - **`L`** + direction — Look at an adjacent tile
+- **`J`** + direction — Jimmy a locked door (consumes a key)
+- **`O`** + direction — Open an unlocked door or chest
+- **`S`** + direction — Search an adjacent tile
+- **`C`** — Quick-cast *In Lor* (Light)
+- **`K` / `D`** — Climb up / Descend stairs & ladders (settlements & dungeons)
 - **`Z`** — Toggle Party `Z`tats modal
 - **`F2`** — Launch a test tactical combat encounter (`A` + direction to attack)
+- **`F3`** — Enter Dungeon Deceit (3D dungeon test)
 - **`Space`** — Pass turn
 - **`Q`** — Save to JSON and quit
+
+## Phases & Status
+
+- [x] **Phase 0: Asset Loaders & Open Data Extraction** — LZW decompressor, `TILES.16` / `DNG1`–`DNG3.16`, fonts, `DATA.OVL` tables, maps, NPCs, dialogues, JSON save/load
+- [x] **Phase 1: Core Engine Primitives** — Time/moons/darkness, 11x11 shadowcasting FOV, foot passability, karma, spell mixing/casting, combat math
+- [x] **Phase 2: Overworld & EGA Renderer** — 256x256 Britannia/Underworld loop, 320x200 EGA `pygame-ce` renderer, HUD, `L`ook, `Z`tats
+- [x] **Phase 3: Settlements, NPC Schedules & Dialogue** — 32 settlements (multi-floor castles/keeps), 24h NPC schedule AI, `.TLK` keyword dialogue, `K`limb stairs, `J`immy/`O`pen
+- [x] **Phase 4: Tactical 11x11 Combat** — `BRIT.CBT` / `DUNGEON.CBT` combat, DEX turn queue, ranged/melee attacks, monster AI, XP/gold, flee/victory
+- [x] **Phase 5: Magic Effects & Shoppes** — Spell effect handlers, per-merchant shoppe menus (`0x81`–`0x88`)
+- [x] **Phase 6: 3D Dungeons** — 8x8x8 toroidal dungeons, `DNG1`–`DNG3` perspective slice rendering, ladders, dungeon room combat
+- [ ] **Phase 7: Title/Intro, Character Creation, Endgame & Polish** — Title/intro sequence, Gypsy virtue questionnaire, Underworld/Shard/Win & Endgame, interactive `M`ix/`C`ast & `Look` polish
 
 ## Repository Layout
 
