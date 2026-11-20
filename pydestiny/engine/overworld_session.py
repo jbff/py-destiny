@@ -240,7 +240,7 @@ class OverworldSession:
         self.log("Not locked!")
         return False
 
-    def start_combat(self, cbt_index: int = 0, monster_idx: int = 32) -> CombatSession:
+    def start_combat(self, cbt_index: int = 2, monster_idx: int = 32) -> CombatSession:
         cbt_list = json.loads((self.data_dir / "maps" / "brit_cbt.json").read_text(encoding="utf-8"))
         cbt_data = cbt_list[cbt_index % len(cbt_list)]
         self.combat = CombatSession.from_cbt_dict(

@@ -78,11 +78,12 @@ class CombatSession:
         actors: list[CombatActor] = []
 
         # Spawn active party members
+        class_tiles = {"M": 320, "B": 324, "F": 328, "A": 332}
         p_slot = 0
         for ci, ch in enumerate(save.characters):
             if ch.party_slot != 0xFF and ch.status != "D" and ch.hp > 0 and p_slot < 6:
                 sx = int(cbt_data["party_start_x"][p_slot]) % 11
-                sy = 9
+                sy = 9 if p_slot < 3 else 10
                 # Compute equipment attack & defense
                 atk = ch.strength
                 dfn = 0
@@ -105,7 +106,7 @@ class CombatSession:
                         attack=atk,
                         defense=dfn,
                         attack_range=rng_dist,
-                        tile_id=284 + (ci % 4),
+                        tile_id=class_tiles.get(ch.char_class, 332),
                         flags=0x80,
                     )
                 )
@@ -120,7 +121,7 @@ class CombatSession:
             mt = int(m_types[i])
             if mt == 0:
                 continue
-            m_idx = default_monster_idx if mt == 0xA0 else max(16, min(47, mt))
+            m_idx = default_monster_idx if mt in (0x70, 0xA0) else max(16, min(47, mt))
             mdef = tables.monsters[m_idx]
             mx, my = int(m_xs[i]) % 11, int(m_ys[i]) % 11
             actors.append(
@@ -136,7 +137,7 @@ class CombatSession:
                     attack=mdef.damage,
                     defense=mdef.armour,
                     attack_range=1,
-                    tile_id=320 + ((m_idx - 16) * 2) % 160,
+                    tile_id=384 + (m_idx - 16) * 4,
                     flags=0x40,
                 )
             )

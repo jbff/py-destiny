@@ -47,6 +47,11 @@ class TestPhase4Combat:
         try:
             session = OverworldSession.from_data_dir()
             cbt = session.start_combat()
+            party_actors = [a for a in cbt.actors if a.is_party]
+            enemy_actors = [a for a in cbt.actors if not a.is_party]
+            assert party_actors and all(a.tile_id in (320, 324, 328, 332) for a in party_actors)
+            assert all(a.y in (9, 10) for a in party_actors)
+            assert enemy_actors and all(a.tile_id == 448 for a in enemy_actors)
             renderer = EgaRenderer()
             surf = renderer.render_overworld(session)
             assert surf.get_size() == (SCREEN_W, SCREEN_H)
