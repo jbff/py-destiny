@@ -91,5 +91,15 @@ Total size: 4,192 bytes (`0x1060`).
 - **`+0x200..+0x21F`** (32 B): 32 x `uint8` NPC sprite/tile type (e.g. `0x70` = guard).
 - **`+0x220..+0x23F`** (32 B): 32 x `uint8` dialogue ID (`0x01..0x7F` = `.TLK` NPC ID, `0x80..0xFE` = shopkeeper/special, `0xFF` = generic guard/no dialogue).
 
+### 6. Combat Maps (`BRIT.CBT`, `DUNGEON.CBT`)
+
+Each combat map is **352 bytes (`11 rows x 32 bytes`)**:
+- `BRIT.CBT` (5,632 B): 16 overworld/terrain combat maps.
+- `DUNGEON.CBT` (39,424 B): 112 dungeon room maps.
+- Per-row layout (32 bytes):
+  - `row[0..10]` (11 B): Tile IDs for the `11 x 11` tactical grid.
+  - `row[11..31]` (21 B): Packed metadata — row 4 holds party spawn X coordinates (`party_start_x[6]`), row 5 holds up to 16 monster types, row 6 holds 16 monster X coordinates, and row 7 holds 16 monster Y coordinates.
+
+
 
 

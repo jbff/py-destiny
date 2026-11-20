@@ -11,6 +11,7 @@ Notes from disassembling `ULTIMA.EXE` and `*.OVL` overlays. All `DS:` offsets ar
 | `0x55a8` | `+0x0002` | 512 B | 16 character records x 32 bytes (index 0 = Avatar) |
 | `0x57a8` | `+0x0202` | 2 B | Food (`uint16`) |
 | `0x57aa` | `+0x0204` | 2 B | Gold (`uint16`) |
+| `0x57f0` | `+0x024a` | 48 B | Prepared spell counts (48 spells, capped at `99`) |
 | `0x5850` | `+0x02aa` | 8 B | Reagents (Ash, Ginseng, Garlic, Silk, Moss, Pearl, Nightshade, Mandrake) |
 | `0x5874` | `+0x02ce` | 2 B | Year (`uint16`, starts at `139`) |
 | `0x587d` | `+0x02d7` | 4 B | Month, Day, Hour, Minute (`uint8` each) |
@@ -87,4 +88,19 @@ Called from overworld/town/dungeon loops for `'A'..'Z'` commands (`'0'..'9'` go 
 | `X` | X-it | `CMDS.OVL+0x0eb4` | — | — |
 | `Y` | Yell | `CMDS.OVL+0x1418` | `CMDS.OVL+0x1418` | `CMDS.OVL+0x1418` |
 | `Z` | Ztats | `ZSTATS.OVL+0x0a3a` | `ZSTATS.OVL+0x0a3a` | `ZSTATS.OVL+0x0a3a` |
+
+## 6. Magic & Reagent Mixing (`CMDS.OVL+0x1ad8`, `CAST.OVL`)
+
+- **Spell List (`DATA.OVL+0x0709`)**: 48 null-terminated spell names (8 circles x 6 spells, starting with `In Lor`, `Grav Por`, `An Zu`, `An Nox`, `Mani`, ...).
+- **Reagent Recipes (`DS:0x1cc0`)**: 48-byte bitmask table (1 byte per spell; bits `7..0` correspond to the 8 reagents at `DS:0x5850`).
+- **Mixing (`CMDS.OVL+0x1ad8`)**:
+  1. Verifies total reagent count across `DS:0x5850..0x5857 > 0`.
+  2. Prompts spell selection (`ZSTATS.OVL` via `0x808e`) and reagent selection (`0xd83e`), then computes max mixable quantity (`0xd9f0`).
+  3. Subtracts consumed reagents from `DS:0x5850[0..7]` and, if the reagent bitmask matches `DS:[0x1cc0 + spell_id]`, increments prepared count `DS:[0x57f0 + spell_id]` (capped at `0x63` = 99).
+
+## 7. Sound & Timing (`ULTIMA.EXE`)
+
+- **PC Speaker SFX (`0x0000:0x21fc`–`0x2315`)**: Drives the PC speaker directly via `in/out 0x61` (and PIT timer). The DOS version of Ultima V has PC speaker sound effects only (no AdLib/MT-32 music).
+- **Animation / Delay Tick (`0x0000:0x3ae6`)**: Runs `n` ticks of `0x0000:0x5910` (animation/world tick) + `0x0000:0x20fa(1)` (delay).
+
 
