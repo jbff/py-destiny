@@ -182,13 +182,19 @@ Karma starts at `75` (`INIT.GAM+0x02e2`, `0..99` range) and is adjusted by playe
 
 1. Prompts for caster and spell (`0..47`), computing `circle = (spell_id // 6) + 1` and storing `circle` in `DS:[0x588f]`.
 2. Checks castability flags at `DATA.OVL+0x1ca0` (`DS:0x1c90` in code): bit `0x08` = Overworld (`location_id == 0`), bit `0x01` = Combat (`location_id >= 0x80`), and town/dungeon bits.
-3. Requires `prepared_count[spell_id] > 0` (`DS:0x57f0`) and `caster.mp >= circle`, then consumes 1 prepared spell and `circle` MP.
+3. Requires `prepared_count[spell_id] > 0` (`DS:0x57f0`), `caster.mp >= circle`, and `caster.level >= circle` (`char[+0x16]`), then consumes 1 prepared spell and `circle` MP (or plays fizzle SFX via `0x0000:0x43ae(0x320, 0x7d0, 1, 0x32)` on failure).
+4. Dispatches via the 48-entry jump table at `CAST.OVL+0x1146` into `CAST.OVL` / `CAST2.OVL` handlers (e.g., `In Lor`/`Vas Lor` -> `CAST2.OVL+0x08ea`, `Rel Hur` -> `CAST2.OVL+0x0306`, `An Grav` -> `CAST2.OVL+0x07bc`, `In Sanct` -> `CAST2.OVL+0x08f8`, `In Ex Por` -> `CAST2.OVL+0x0768`).
 
 ## 17. 3D Dungeon Rendering (`DUNGEON.OVL`, `DNG1`–`DNG3.16`)
 
 - **Facing & Level**: `DS:[0x6603]` stores party facing (`0..3` = North/East/South/West); `DS:[0x5895] + 1` (`1..8`) is the dungeon depth.
 - **3D Perspective Slices**: `DNG1.16`, `DNG2.16`, and `DNG3.16` (and `.4` CGA equivalents) each decompress to `54,666` bytes containing **28 perspective wall/door/corridor sprites** (`uint32` offset table, widths `8`/`16`/`24`/`32` x height `164`).
 - **Ceiling & Floor (`DUNGEON.OVL+0x0332`)**: Fills the 3D viewport ceiling and floor (`0x0000:0x0aa6`) using style colors `DS:[0x13b2]` / `DS:[0x13b0]` selected by `location_id - 0x20`.
+
+## 18. Shoppes & Services (`SHOPPES.OVL`–`SHOPPES3.OVL`, `SHOPPE.DAT`)
+
+- Triggered from `TALK.OVL+0x03d3` when an NPC's dialogue ID is `0xFE` (`254`, merchant/service NPC).
+- Shoppe names (Taverns, Stables, Shipwrights, Herbalists/Alchemists, Guilds, Healers, etc.) live in `DATA.OVL+0x0cb1+`, and shopkeeper dialogue is loaded from `SHOPPE.DAT` (word-compressed with `DATA.OVL+0x24F8` + `0x80`).
 
 
 
