@@ -12,13 +12,13 @@ from pydestiny.ui.ega_renderer import SCALE, SCREEN_H, SCREEN_W, EgaRenderer
 
 DIR_KEYS = {
     pygame.K_UP: (0, -1),
-    pygame.K_w: (0, -1),
+    pygame.K_KP8: (0, -1),
     pygame.K_DOWN: (0, 1),
-    pygame.K_s: (0, 1),
+    pygame.K_KP2: (0, 1),
     pygame.K_LEFT: (-1, 0),
-    pygame.K_a: (-1, 0),
+    pygame.K_KP4: (-1, 0),
     pygame.K_RIGHT: (1, 0),
-    pygame.K_d: (1, 0),
+    pygame.K_KP6: (1, 0),
 }
 
 
