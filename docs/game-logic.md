@@ -154,6 +154,15 @@ Called from overworld/town/dungeon loops for `'A'..'Z'` commands (`'0'..'9'` go 
    - `day > 28` (`0x1c`): resets `day = 1`, clears monthly flags (`DS:0x5858..0x585a`, `0x57b2`, `0x5959`), increments `char[+0x17]` (months in party, capped at `25`) for all 16 characters, and increments `month` (`DS:[0x587d]`).
    - `month > 13` (`0x0d`): resets `month = 1` and increments `year` (`DS:[0x5874]`).
 
+## 13. Moon Phases & Sky Position (`0x0000:0x4ae0`)
+
+- **Phase Lookup Table (`DATA.OVL+0x1ee8`, 29 x 2 bytes)**:
+  - `DS:[0x5885]` = Trammel phase (`'0'..'7'` / `0x30..0x37`, 14-day cycle repeating on days 15–28).
+  - `DS:[0x5886]` = Felucca phase (`'0'..'7'` / `0x30..0x37`, 9-day cycle).
+- **Sky Visibility (`0x0000:0x4aee`–`0x4b48`)**:
+  - Trammel position: `(8 - hour)` (wrapped `+24` if `< -12`), visible when `0 <= pos < 12`.
+  - Felucca position: `(2 - hour)` (wrapped `+24` if `< -12`), visible when `0 <= pos < 12`.
+
 
 
 

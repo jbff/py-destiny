@@ -107,6 +107,11 @@ Each combat map is **352 bytes (`11 rows x 32 bytes`)**:
 - **`SIGNS.DAT`** (8,364 B): `uint16 count` (`0x0042`) + `uint16` offset table followed by sign text records.
 - **`QUESTION.DAT`** (7,746 B): Plain ASCII gypsy/virtue character-creation questions (`{`-delimited).
 
+### 8. Bitmap Fonts (`IBM.CH`, `RUNES.CH`)
+
+- `IBM.CH` and `RUNES.CH` (1,024 B each): 128 ASCII glyphs x 8 bytes (`8 x 8` 1bpp, MSB-first per row).
+
+
 
 
 
