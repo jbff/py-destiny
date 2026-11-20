@@ -11,6 +11,7 @@ from pydestiny.assets.graphics import EGA_PALETTE
 from pydestiny.assets.open_data import DEFAULT_DATA_DIR
 from pydestiny.engine.fov import UNSEEN_TILE
 from pydestiny.engine.overworld_session import AVATAR_TILE_ID, OverworldSession
+from pydestiny.engine.shoppes import DEFAULT_SHOP_MENU
 
 DEFAULT_ASSETS_DIR = Path(__file__).resolve().parent.parent.parent / "assets"
 
@@ -81,6 +82,8 @@ class EgaRenderer:
 
         if session.ztats_open:
             self._render_ztats(session)
+        elif session.shop_open:
+            self._render_shop(session)
         elif session.combat is not None:
             self._render_combat(session)
         else:
@@ -188,3 +191,16 @@ class EgaRenderer:
                 self.canvas.blit(self.tiles[actor.tile_id], (px, py))
                 if cbt.active_actor is actor:
                     pygame.draw.rect(self.canvas, EGA_PALETTE[14], (px, py, 16, 16), 1)
+
+    def _render_shop(self, session: OverworldSession) -> None:
+        self.draw_text(12, 16, "=== SHOPPE MENU ===", EGA_PALETTE[14])
+        y = 30
+        for i, item in enumerate(DEFAULT_SHOP_MENU):
+            self.draw_text(
+                12,
+                y,
+                f"{i+1}) {item.label:<12s} {item.cost:3d}g",
+                EGA_PALETTE[15],
+            )
+            y += 12
+        self.draw_text(12, 168, "1-9 Buy  Esc Exit", EGA_PALETTE[11])

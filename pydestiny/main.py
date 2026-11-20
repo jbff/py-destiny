@@ -41,6 +41,13 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
+                if session.shop_open:
+                    if event.key in (pygame.K_ESCAPE, pygame.K_q):
+                        session.shop_open = False
+                    elif pygame.K_1 <= event.key <= pygame.K_9:
+                        session.shop_buy(event.key - pygame.K_1)
+                    continue
+
                 if session.talk_session is not None:
                     if event.key == pygame.K_RETURN:
                         session.submit_talk(session.talk_input)

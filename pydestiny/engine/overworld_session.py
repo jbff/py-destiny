@@ -10,8 +10,10 @@ from pydestiny.engine.combat_session import CombatSession
 from pydestiny.engine.dialogue import TalkSession
 from pydestiny.engine.fov import compute_fov
 from pydestiny.engine.karma import KARMA_LOCKPICK_SETTLEMENT, adjust_karma
+from pydestiny.engine.magic_effects import execute_spell
 from pydestiny.engine.movement import is_foot_passable, wrap_world_coord
 from pydestiny.engine.settlement import SettlementState
+from pydestiny.engine.shoppes import DEFAULT_SHOP_MENU, buy_shop_item
 from pydestiny.engine.time import advance_time, get_moon_phases, update_darkness
 from pydestiny.state.savegame import SaveGame
 
@@ -42,6 +44,7 @@ class OverworldSession:
         self.awaiting_look_dir = False
         self.awaiting_talk_dir = False
         self.awaiting_attack_dir = False
+        self.shop_open = False
         self.combat: CombatSession | None = None
         self.talk_session: TalkSession | None = None
         self.talk_input: str = ""
@@ -196,8 +199,9 @@ class OverworldSession:
             self.log("Guard: Move along!")
             return False
         if npc.talk_id >= 0x80:
-            self.log("Shopkeeper busy.")
-            return False
+            self.shop_open = True
+            self.log("Welcome to Shoppe!")
+            return True
         dlg = self.settlement.dialogues.get(npc.talk_id)
         if dlg is None:
             self.log("No response!")
@@ -250,6 +254,27 @@ class OverworldSession:
             for m in self.combat.messages[-2:]:
                 self.log(m)
             self.combat = None
+
+    def shop_buy(self, slot_idx: int) -> tuple[bool, str]:
+        if not 0 <= slot_idx < len(DEFAULT_SHOP_MENU):
+            return False, "Invalid choice"
+        ok, msg = buy_shop_item(self.save, DEFAULT_SHOP_MENU[slot_idx])
+        self.log(msg)
+        return ok, msg
+
+    def cast_spell_quick(self, caster_idx: int, spell_idx: int) -> tuple[bool, str]:
+        ok, msg = execute_spell(
+            self.save,
+            self.tables,
+            caster_idx,
+            spell_idx,
+            in_combat=(self.combat is not None),
+            combat_session=self.combat,
+        )
+        self.log(msg)
+        if ok and spell_idx in (0, 12):  # Light spells
+            self.darkness = 0
+        return ok, msg
 
     def pass_turn(self) -> None:
         self.log("Pass")
