@@ -122,7 +122,7 @@ def load_game_tables(data_ovl_path: Path) -> GameTables:
     item_range = d[0x16AC : 0x16AC + 48]
 
     # Passability & Opacity
-    foot_impassable_mask = d[0x54D4 : 0x54D4 + 32]
+    foot_impassable_mask = d[0x54E4 : 0x54E4 + 32]
     opaque_tiles = frozenset(d[0x6A96 : 0x6A96 + 19])
 
     # Moon phases (days 0..28 -> (trammel, felucca) as 0..7)

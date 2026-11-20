@@ -110,7 +110,7 @@ Called from overworld/town/dungeon loops for `'A'..'Z'` commands (`'0'..'9'` go 
 ## 8. Tile Passability (`0x0000:0x2bd4`, `0x2c2e`, `0x2c4c`)
 
 - **Transport Mode (`DS:0x54f4 + (actor_tile >> 2)`)**: Dispatches passability rules by transport/movement mode.
-- **Foot-Impassable Bitmask (`DATA.OVL+0x54d4`, 32 bytes = 256 bits)**:
+- **Foot-Impassable Bitmask (`DATA.OVL+0x54e4`, 32 bytes = 256 bits)**:
   - Bit `(0x80 >> (tile_id & 7))` in byte `tile_id >> 3`: `1` = blocked on foot, `0` = passable.
   - Tiles `0x90..0x93` (doors/barriers) are additionally blocked unless `(mode & 0xfe) == 0x1c` or `(mode & 0xf0) == 0x40`.
 - **Water Passability (`0x0000:0x2c2e`)**: Returns `1` if `tile_id < 4` (water) or `(tile_id & 0xf0) == 0x60` (bridges/moongate/whirlpool).

@@ -44,9 +44,9 @@ def dump_monsters(data: bytes) -> None:
 
 
 def dump_tile_passability(data: bytes) -> None:
-    mask = data[0x54D4 : 0x54D4 + 32]
+    mask = data[0x54E4 : 0x54E4 + 32]
     blocked = [tid for tid in range(256) if mask[tid >> 3] & (0x80 >> (tid & 7))]
-    print(f"\n=== Foot-Impassable Tiles (DATA.OVL+0x54d4, {len(blocked)}/256 blocked) ===")
+    print(f"\n=== Foot-Impassable Tiles (DATA.OVL+0x54e4, {len(blocked)}/256 blocked) ===")
     print(" ", " ".join(f"{t:02x}" for t in blocked))
 
 
