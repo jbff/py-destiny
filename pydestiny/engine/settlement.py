@@ -58,12 +58,14 @@ class SettlementState:
     def __init__(
         self,
         location_id: int,
-        floors: list[list[list[int]]],
+        base_map_idx: int,
+        all_maps: list[list[list[int]]],
         npcs: list[ActiveNpc],
         dialogues: dict[int, NpcDialogue],
     ) -> None:
         self.location_id = location_id
-        self.floors = floors
+        self.base_map_idx = base_map_idx
+        self.all_maps = all_maps
         self.npcs = npcs
         self.dialogues = dialogues
 
@@ -72,14 +74,11 @@ class SettlementState:
         cls,
         location_id: int,
         hour: int,
+        base_map_idx: int = 0,
         data_dir: Path = DEFAULT_DATA_DIR,
     ) -> SettlementState:
         cat, idx = settlement_category_and_index(location_id)
         all_maps = json.loads((data_dir / "maps" / f"{cat}.json").read_text(encoding="utf-8"))
-        # Each settlement can have 1 or 2 floors in the 16-map file
-        floors = [all_maps[idx]]
-        if idx + 8 < len(all_maps):
-            floors.append(all_maps[idx + 8])
 
         npc_groups = json.loads((data_dir / "npcs" / f"{cat}.json").read_text(encoding="utf-8"))
         raw_npcs = npc_groups[idx]
@@ -112,10 +111,15 @@ class SettlementState:
         dialogues = {
             int(k): parse_tlk_script(int(k), v) for k, v in raw_tlk.items()
         }
-        return cls(location_id, floors, active, dialogues)
+        return cls(location_id, base_map_idx, all_maps, active, dialogues)
+
+    def current_floor(self, z: int = 0) -> list[list[int]]:
+        signed_z = z - 256 if z >= 0x80 else z
+        map_idx = max(0, min(len(self.all_maps) - 1, self.base_map_idx + signed_z))
+        return self.all_maps[map_idx]
 
     def get_tile(self, x: int, y: int, z: int = 0) -> int:
-        floor = self.floors[z % len(self.floors)]
+        floor = self.current_floor(z)
         if 0 <= x < 32 and 0 <= y < 32:
             return floor[y][x]
         return 0x04

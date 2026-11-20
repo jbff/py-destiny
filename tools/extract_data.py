@@ -53,6 +53,7 @@ def extract_all(orig: Path = DEFAULT_ORIG_DIR, out: Path = DEFAULT_OUT_DIR) -> N
         "opaque_tiles": sorted(tables.opaque_tiles),
         "moon_phases": [list(p) for p in tables.moon_phases],
         "location_coords": [list(c) for c in tables.location_coords],
+        "settlement_base_maps": list(tables.settlement_base_maps),
     }
     (out / "tables.json").write_text(json.dumps(tables_json, indent=2) + "\n", encoding="utf-8")
 

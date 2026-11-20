@@ -48,6 +48,23 @@ class TestPhase3Settlements:
         assert session.save.location_id == 0
         assert (session.save.x, session.save.y) == (232, 135)
 
+    def test_lb_castle_and_britain_ground_floor_entry(self) -> None:
+        session = OverworldSession.from_data_dir()
+        # Britain (loc 2 @ 81, 106 -> TOWNE.DAT[2])
+        session.save.x, session.save.y = 81, 106
+        assert session.enter_location()
+        assert session.save.location_id == 2
+        assert session.settlement is not None
+        assert session.settlement.get_tile(15, 30, 0) == 0x44
+        session.exit_settlement()
+
+        # Lord British's Castle (loc 17 @ 86, 107 -> CASTLE.DAT[1], not basement[0])
+        session.save.x, session.save.y = 86, 107
+        assert session.enter_location()
+        assert session.save.location_id == 17
+        assert session.settlement is not None
+        assert session.settlement.get_tile(15, 30, 0) == 0x44
+
     def test_render_settlement_with_npcs(self) -> None:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
         pygame.init()

@@ -56,6 +56,7 @@ class GameTables:
     brit_chunk_map: bytes
     tlk_words: dict[int, str]
     location_coords: tuple[tuple[int, int], ...]
+    settlement_base_maps: tuple[int, ...]
 
 
 def _read_cstrings(data: bytes, offset: int, count: int) -> list[str]:
@@ -140,6 +141,9 @@ def load_game_tables(data_ovl_path: Path) -> GameTables:
     loc_ys = d[0x1EC2 : 0x1EC2 + 40]
     location_coords = tuple((loc_xs[i], loc_ys[i]) for i in range(40))
 
+    # 32 Settlement base map indices into TOWNE/DWELLING/CASTLE/KEEP.DAT (DATA.OVL+0x1e2a)
+    settlement_base_maps = tuple(d[0x1E2A + i] for i in range(32))
+
     # .TLK word dictionary (0x24F8 + idx*2, string pool +0x10)
     import struct
 
@@ -165,4 +169,5 @@ def load_game_tables(data_ovl_path: Path) -> GameTables:
         brit_chunk_map=brit_chunk_map,
         tlk_words=tlk_words,
         location_coords=location_coords,
+        settlement_base_maps=settlement_base_maps,
     )

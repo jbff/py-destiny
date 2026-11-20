@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from pydestiny.assets.open_data import DEFAULT_DATA_DIR, OpenTables, load_open_grid, load_open_tables
+from pydestiny.engine.combat_session import CombatSession
 from pydestiny.engine.dialogue import TalkSession
 from pydestiny.engine.fov import compute_fov
 from pydestiny.engine.karma import KARMA_LOCKPICK_SETTLEMENT, adjust_karma
@@ -40,12 +41,17 @@ class OverworldSession:
         self.ztats_open = False
         self.awaiting_look_dir = False
         self.awaiting_talk_dir = False
+        self.awaiting_attack_dir = False
+        self.combat: CombatSession | None = None
         self.talk_session: TalkSession | None = None
         self.talk_input: str = ""
         self.quit_requested = False
         self.settlement: SettlementState | None = None
         if 1 <= save.location_id <= 32:
-            self.settlement = SettlementState.load(save.location_id, save.hour, data_dir)
+            base_idx = tables.settlement_base_maps[save.location_id - 1]
+            self.settlement = SettlementState.load(
+                save.location_id, save.hour, base_idx, data_dir
+            )
 
     @classmethod
     def from_data_dir(
@@ -157,7 +163,10 @@ class OverworldSession:
                 self.save.z = 0
                 self.save.x = 15
                 self.save.y = 30
-                self.settlement = SettlementState.load(loc_id, self.save.hour, self.data_dir)
+                base_idx = self.tables.settlement_base_maps[loc_id - 1]
+                self.settlement = SettlementState.load(
+                    loc_id, self.save.hour, base_idx, self.data_dir
+                )
                 self.log(f"Entering loc #{loc_id}")
                 return True
         self.log("Nothing to enter!")
@@ -180,8 +189,11 @@ class OverworldSession:
             self.log("No one here!")
             return False
         npc = self.settlement.npc_at(self.save.x + dx, self.save.y + dy, self.save.z)
-        if npc is None or npc.talk_id == 0 or npc.talk_id == 0xFF:
+        if npc is None or npc.talk_id == 0:
             self.log("No response!")
+            return False
+        if npc.talk_id == 0xFF:
+            self.log("Guard: Move along!")
             return False
         if npc.talk_id >= 0x80:
             self.log("Shopkeeper busy.")
@@ -218,11 +230,26 @@ class OverworldSession:
                 return False
             self.save.keys -= 1
             adjust_karma(self.save, KARMA_LOCKPICK_SETTLEMENT)
-            self.settlement.floors[self.save.z % len(self.settlement.floors)][ty][tx] = 0x44
+            self.settlement.current_floor(self.save.z)[ty][tx] = 0x44
             self.log("Unlocked!")
             return True
         self.log("Not locked!")
         return False
+
+    def start_combat(self, cbt_index: int = 0, monster_idx: int = 32) -> CombatSession:
+        cbt_list = json.loads((self.data_dir / "maps" / "brit_cbt.json").read_text(encoding="utf-8"))
+        cbt_data = cbt_list[cbt_index % len(cbt_list)]
+        self.combat = CombatSession.from_cbt_dict(
+            self.save, self.tables, cbt_data, default_monster_idx=monster_idx
+        )
+        self.log("Combat!")
+        return self.combat
+
+    def finish_combat_if_done(self) -> None:
+        if self.combat is not None and self.combat.finished:
+            for m in self.combat.messages[-2:]:
+                self.log(m)
+            self.combat = None
 
     def pass_turn(self) -> None:
         self.log("Pass")
