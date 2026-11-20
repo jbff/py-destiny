@@ -113,10 +113,19 @@ class EgaRenderer:
                         vx, vy = npc.x - ox, npc.y - oy
                         if 0 <= vx < 11 and 0 <= vy < 11 and fov[vy][vx] != UNSEEN_TILE:
                             ntid = 256 + npc.sprite
+                            npc_tile = session.settlement.get_tile(npc.x, npc.y, npc.z)
+                            if 0x90 <= npc_tile <= 0x93:
+                                ntid = 308 + (npc_tile - 0x90)
                             if 0 <= ntid < len(self.tiles):
                                 self.canvas.blit(self.tiles[ntid], (8 + vx * 16, 12 + vy * 16))
-            # Draw Avatar at center (5, 5)
-            self.canvas.blit(self.tiles[AVATAR_TILE_ID], (8 + 5 * 16, 12 + 5 * 16))
+            # Draw Avatar at center (5, 5) — sitting if on chair/bed
+            under_tile = session.get_tile(session.save.x, session.save.y)
+            avatar_tid = AVATAR_TILE_ID
+            if 0x90 <= under_tile <= 0x93:
+                avatar_tid = 304 + (under_tile - 0x90)
+            elif under_tile in (0xAB, 0xAC):
+                avatar_tid = 282
+            self.canvas.blit(self.tiles[avatar_tid], (8 + 5 * 16, 12 + 5 * 16))
 
         # Top-right: Party Roster (slots with party_slot != 0xFF)
         y_cursor = 8

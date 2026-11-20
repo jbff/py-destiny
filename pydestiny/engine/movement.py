@@ -14,7 +14,8 @@ def is_foot_passable(
     """
     if tile_id in foot_impassable_tiles:
         return False
-    if (tile_id & 0xFC) == 0x90:
+    # Chairs (0x90..0x93) are passable on foot (actor_mode == 0), blocked for mounts/vehicles
+    if (tile_id & 0xFC) == 0x90 and actor_mode != 0:
         if (actor_mode & 0xFE) != 0x1C and (actor_mode & 0xF0) != 0x40:
             return False
     return True
