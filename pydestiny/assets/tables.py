@@ -55,6 +55,7 @@ class GameTables:
     moon_phases: tuple[tuple[int, int], ...]
     brit_chunk_map: bytes
     tlk_words: dict[int, str]
+    location_coords: tuple[tuple[int, int], ...]
 
 
 def _read_cstrings(data: bytes, offset: int, count: int) -> list[str]:
@@ -134,6 +135,11 @@ def load_game_tables(data_ovl_path: Path) -> GameTables:
     # BRIT.DAT 16x16 chunk map
     brit_chunk_map = d[0x3886 : 0x3886 + 256]
 
+    # 40 Location (x, y) overworld coordinates (0..31 settlements, 32..39 dungeons)
+    loc_xs = d[0x1E9A : 0x1E9A + 40]
+    loc_ys = d[0x1EC2 : 0x1EC2 + 40]
+    location_coords = tuple((loc_xs[i], loc_ys[i]) for i in range(40))
+
     # .TLK word dictionary (0x24F8 + idx*2, string pool +0x10)
     import struct
 
@@ -158,4 +164,5 @@ def load_game_tables(data_ovl_path: Path) -> GameTables:
         moon_phases=moon_phases,
         brit_chunk_map=brit_chunk_map,
         tlk_words=tlk_words,
+        location_coords=location_coords,
     )

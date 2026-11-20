@@ -90,6 +90,17 @@ class EgaRenderer:
                     py = 12 + vy * 16
                     if tid != UNSEEN_TILE and 0 <= tid < len(self.tiles):
                         self.canvas.blit(self.tiles[tid], (px, py))
+            # Draw settlement NPCs within visible 11x11 FOV
+            if session.settlement is not None:
+                ox = session.save.x - 5
+                oy = session.save.y - 5
+                for npc in session.settlement.npcs:
+                    if npc.z == session.save.z:
+                        vx, vy = npc.x - ox, npc.y - oy
+                        if 0 <= vx < 11 and 0 <= vy < 11 and fov[vy][vx] != UNSEEN_TILE:
+                            ntid = 256 + npc.sprite
+                            if 0 <= ntid < len(self.tiles):
+                                self.canvas.blit(self.tiles[ntid], (8 + vx * 16, 12 + vy * 16))
             # Draw Avatar at center (5, 5)
             self.canvas.blit(self.tiles[AVATAR_TILE_ID], (8 + 5 * 16, 12 + 5 * 16))
 
@@ -112,15 +123,21 @@ class EgaRenderer:
         self.draw_text(192, 81, f"T:{t_ph} F:{f_ph} K:{sg.karma:2d}", EGA_PALETTE[7])
         self.draw_text(192, 90, f"F:{sg.food:<4d} G:{sg.gold:<5d}", EGA_PALETTE[14])
 
-        # Bottom-right: Scrolling message log (last 10 lines)
-        log_lines = session.messages[-10:]
-        for i, line in enumerate(log_lines):
-            self.draw_text(192, 102 + i * 9, line[:16], EGA_PALETTE[7])
+        # Bottom-right: Scrolling message log (last 10 lines, or 9 + talk prompt)
+        if session.talk_session is not None:
+            log_lines = session.messages[-9:]
+            for i, line in enumerate(log_lines):
+                self.draw_text(192, 102 + i * 9, line[:16], EGA_PALETTE[7])
+            self.draw_text(192, 102 + 9 * 9, f">{session.talk_input[-14:]}_", EGA_PALETTE[14])
+        else:
+            log_lines = session.messages[-10:]
+            for i, line in enumerate(log_lines):
+                self.draw_text(192, 102 + i * 9, line[:16], EGA_PALETTE[7])
 
         # Coordinates footer
-        world = "UNDER" if sg.z >= 0x80 else "BRIT "
+        world = f"LOC{sg.location_id:02d}" if session.settlement else ("UNDER" if sg.z >= 0x80 else "BRIT ")
         self.draw_text(8, 1, f"{world} ({sg.x:3d},{sg.y:3d})", EGA_PALETTE[11])
-        self.draw_text(192, 1, "WASD/Arr L Z Q", EGA_PALETTE[8])
+        self.draw_text(192, 1, "E L T Z Q", EGA_PALETTE[8])
 
         return self.canvas
 

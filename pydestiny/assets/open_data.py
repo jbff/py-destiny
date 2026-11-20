@@ -22,6 +22,7 @@ class OpenTables:
     foot_impassable_tiles: frozenset[int]
     opaque_tiles: frozenset[int]
     moon_phases: tuple[tuple[int, int], ...]
+    location_coords: tuple[tuple[int, int], ...]
 
 
 def load_open_tables(data_dir: Path = DEFAULT_DATA_DIR) -> OpenTables:
@@ -36,6 +37,7 @@ def load_open_tables(data_dir: Path = DEFAULT_DATA_DIR) -> OpenTables:
         foot_impassable_tiles=frozenset(raw["foot_impassable_tiles"]),
         opaque_tiles=frozenset(raw["opaque_tiles"]),
         moon_phases=tuple((p[0], p[1]) for p in raw["moon_phases"]),
+        location_coords=tuple((c[0], c[1]) for c in raw["location_coords"]),
     )
 
 

@@ -41,15 +41,36 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
+                if session.talk_session is not None:
+                    if event.key == pygame.K_RETURN:
+                        session.submit_talk(session.talk_input)
+                    elif event.key == pygame.K_ESCAPE:
+                        session.talk_session = None
+                        session.talk_input = ""
+                    elif event.key == pygame.K_BACKSPACE:
+                        session.talk_input = session.talk_input[:-1]
+                    elif event.unicode and event.unicode.isprintable():
+                        session.talk_input += event.unicode
+                    continue
+
                 if session.awaiting_look_dir and event.key in DIR_KEYS:
                     dx, dy = DIR_KEYS[event.key]
                     session.look_at(dx, dy)
                     session.awaiting_look_dir = False
+                elif session.awaiting_talk_dir and event.key in DIR_KEYS:
+                    dx, dy = DIR_KEYS[event.key]
+                    session.start_talk(dx, dy)
+                    session.awaiting_talk_dir = False
                 elif event.key in DIR_KEYS and not session.ztats_open:
                     dx, dy = DIR_KEYS[event.key]
                     session.step_move(dx, dy)
                 elif event.key == pygame.K_SPACE and not session.ztats_open:
                     session.pass_turn()
+                elif event.key == pygame.K_e and not session.ztats_open:
+                    session.enter_location()
+                elif event.key == pygame.K_t and not session.ztats_open:
+                    session.awaiting_talk_dir = True
+                    session.log("Talk-dir?")
                 elif event.key == pygame.K_l and not session.ztats_open:
                     session.awaiting_look_dir = True
                     session.log("Look-dir?")
