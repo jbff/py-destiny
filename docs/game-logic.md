@@ -11,6 +11,8 @@ Notes from disassembling `ULTIMA.EXE` and `*.OVL` overlays. All `DS:` offsets ar
 | `0x55a8` | `+0x0002` | 512 B | 16 character records x 32 bytes (index 0 = Avatar) |
 | `0x57a8` | `+0x0202` | 2 B | Food (`uint16`) |
 | `0x57aa` | `+0x0204` | 2 B | Gold (`uint16`) |
+| `0x57ac` | `+0x0206` | 6 B | Keys (`0x57ac`), Gems (`0x57ae`), Torches (`0x57b0`) (`uint16` each) |
+| `0x57c0` | `+0x021a` | 48 B | Equipment / item inventory counts (48 items) |
 | `0x57f0` | `+0x024a` | 48 B | Prepared spell counts (48 spells, capped at `99`) |
 | `0x5850` | `+0x02aa` | 8 B | Reagents (Ash, Ginseng, Garlic, Silk, Moss, Pearl, Nightshade, Mandrake) |
 | `0x5874` | `+0x02ce` | 2 B | Year (`uint16`, starts at `139`) |
@@ -201,9 +203,13 @@ Karma starts at `75` (`INIT.GAM+0x02e2`, `0..99` range) and is adjusted by playe
 - **Tile Lookup (`0x0000:0x4402(y, x)`)**:
   - Combat (`location_id >= 0x80`): indexes `DS:0xad14 + (y << 5) + x` (32-byte row stride).
   - Overworld (`location_id == 0`): indexes a `32 x 32` rolling 4-chunk cache (`4 x 16x16` chunks) anchored at `(DS:[0x589b], DS:[0x589c])` via `(x - origin_x) & 0x1f`, `(y - origin_y) & 0x1f`.
-- **FOV Buffer (`0x0000:0x5d0a`)**:
+- **FOV Buffer (`0x0000:0x5d0a`, `0x5a28`, `0x5dfe`)**:
   - Initializes the `11 x 11` viewport buffer at `DS:0xab02` (32-byte row stride) to `0xFF` (unseen/occluded).
-  - Centers on `(center_x - 5, center_y - 5)` and fills visible tiles within `light_radius` (`DS:[0x58a5]`).
+  - Runs a BFS flood-fill (`0x0000:0x5a28`) from `(5, 5)` within `light_radius` (`DS:[0x58a5]`).
+  - **Tile Opacity (`0x0000:0x5dfe`)**:
+    - Semi-transparent tiles (`0x4a`, `0x4b`, `0x98`, `0xba`, `0xbb`): transparent only at `dist == 1`.
+    - Opaque tiles (`DATA.OVL+0x6a96`, 19 bytes): `09 0a 0c 0d 4d 4e 4f 5a 97 b8 b9 bc d0 d1 d2 d3 f8 fe ff` (blocks further propagation).
+- **EXP Award (`COMBAT.OVL+0x1934`)**: Calls `0x0000:0x3f14(&char.exp, xp_gain, 9999)`, capping character EXP at `9,999`.
 
 
 
