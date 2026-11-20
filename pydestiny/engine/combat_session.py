@@ -121,7 +121,12 @@ class CombatSession:
             mt = int(m_types[i])
             if mt == 0:
                 continue
-            m_idx = default_monster_idx if mt in (0x70, 0xA0) else max(16, min(47, mt))
+            if mt in (0x70, 0xA0):
+                m_idx = default_monster_idx
+            elif 0x80 <= mt <= 0xFC:
+                m_idx = 16 + (mt - 0x80) // 4
+            else:
+                m_idx = max(16, min(47, mt))
             mdef = tables.monsters[m_idx]
             mx, my = int(m_xs[i]) % 11, int(m_ys[i]) % 11
             actors.append(
@@ -236,8 +241,9 @@ class CombatSession:
                 self.messages.append(f"{defender.name[:6]} killed!")
                 if attacker.is_party:
                     award_exp(self.save.characters[attacker.index], max(5, defender.max_hp))
-                self.gold_looted += self.rng.randint(2, 12)
-                self.save.gold += self.gold_looted
+                loot = self.rng.randint(2, 12)
+                self.gold_looted += loot
+                self.save.gold += loot
 
     def move_active(self, dx: int, dy: int) -> bool:
         if self.finished or self.active_actor is None:
