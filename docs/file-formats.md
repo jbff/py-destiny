@@ -82,7 +82,7 @@ Total size: 4,192 bytes (`0x1060`).
 ### 5. Settlement NPCs (`*.NPC`)
 
 `CASTLE.NPC`, `TOWNE.NPC`, `KEEP.NPC`, and `DWELLING.NPC` are 4,608 bytes each: **8 settlements x 576 bytes**:
-- **`+0x000..+0x1FF`** (512 B): 32 NPC schedule records x 16 bytes each (loaded into `DS:0x5f5e`):
+- **`+0x000..+0x1FF`** (512 B): 32 NPC schedule records x 16 bytes each (loaded into `DS:0x5d5e`):
   - `+0x00..0x02`: `ai_type[3]` (3 daily schedule phases)
   - `+0x03..0x05`: `x[3]` (`0..31`)
   - `+0x06..0x08`: `y[3]` (`0..31`)

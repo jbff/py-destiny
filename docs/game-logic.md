@@ -22,8 +22,8 @@ Notes from disassembling `ULTIMA.EXE` and `*.OVL` overlays. All `DS:` offsets ar
 | `0x5897` | `+0x02f1` | 1 B | Party `y` coordinate |
 | `0x595a` | `+0x03b4` | 512 B | Current dungeon map (`8 levels x 8 x 8` cells; `((z & 0xff) << 6) | (y << 3) | x`) |
 | `0x5c5a` | `+0x06b4` | 256 B | Active map objects / monsters / vehicles (32 slots x 8 bytes) |
-| `0x5d5e` | `+0x07b8` | 512 B | Settlement NPC state table (32 NPCs x 16 bytes) |
-| `0x5f5e` | `+0x09b8` | 512 B | Settlement NPC schedule table (32 NPCs x 16 bytes) |
+| `0x5d5e` | `+0x07b8` | 512 B | Settlement NPC schedule table from `*.NPC` (32 NPCs x 16 bytes) |
+| `0x5f5e` | `+0x09b8` | 512 B | Settlement NPC runtime state table (32 NPCs x 16 bytes) |
 
 ## 2. Overworld Loop (`MAINOUT.OVL`, `LoadSeg = 0x081d`)
 
@@ -118,5 +118,27 @@ Called from overworld/town/dungeon loops for `'A'..'Z'` commands (`'0'..'9'` go 
 - Indices `16..47`: 32 monster types (`Sea Horse`..`Shadow Lord`, names at `DATA.OVL+0x023e`).
 - Per-record 8-byte layout: `[STR, DEX, INT, ARM, DMG, HP, MaxSpawn, Special]`.
 - Combat actor state is stored in `DS:0xba16` (8 bytes per actor: `x` at `+0x04`, `y` at `+0x05`, type/index at `+0x02`–`+0x03`).
+
+## 10. Equipment Stats & Combat Formulas (`COMBAT.OVL`, `COMSUBS.OVL`)
+
+- **Equipment Tables (`DATA.OVL`)**:
+  - `0x1614`–`0x1643` (48 B): Weapon/item Attack / Damage (e.g., `99` = Glass Sword, `30` = Mystic Sword / Magic Axe).
+  - `0x1644`–`0x1673` (48 B): Armour / Shield / Helm Defense (`1` = Leather Helm, `2` = Spiked Helm, `3..5` = Shields, `1..10` = Cloth..Mystic Armour).
+  - `0x16ac`–`0x16db` (48 B): Weapon Range (`8` = bows/slings, `2..3` = halberd/axe, `1` = melee).
+- **Effective DEX (`COMBAT.OVL+0x139a`)**: Returns `1` if Time Stop (`DS:[0x587a] == 'T'`) is active on an enemy (`flags & 0x40`) or if actor is asleep/paralyzed (`flags & 8`); otherwise returns `actor.dex`.
+- **Hit / Miss Formula (`COMBAT.OVL+0x14d6`)**:
+  1. `threshold = (attacker_stat - defender_stat + 30) // 2`
+  2. `roll = roll_1d30()` (`0x0000:0x3abe` -> `rand(60) >> 1`, clamped `>= 1`, range `1..29`).
+  3. Returns `0` (**HIT**) if `roll < threshold`, or `1` (**MISS**) if `roll >= threshold`.
+- **Apply Damage (`COMBAT.OVL+0x1574`)**:
+  - For party members (`flags & 0x80`): subtracts `dmg` from `char.hp` (`DS:0x55b8`). If `hp < 1` or `dmg == 99`, sets `hp = 0`, `flags |= 0x20` (dead), `status = 'D'` (`0x44`), places corpse tile `0x1e`, and clears active turn if `DS:[0x587b] == char_idx`.
+- **Distance (`COMSUBS.OVL+0x048a` / `0x04d4`)**: Integer Euclidean distance `isqrt(dx^2 + dy^2)` via odd-number subtraction.
+
+## 11. NPC Schedules (`NPC.OVL+0x00d6`)
+
+- `NPC.OVL+0x00d6(hour)` iterates NPCs `1..31` (skipping entries where `DS:[0x659e + npc_idx] == 0`):
+  1. Resolves active schedule slot (`0..2`) for `hour` via `0xb570(hour, npc_idx)`.
+  2. Copies `(x, y, z)` from `DS:0x5d5e` (`*.NPC` schedule record) into runtime NPC state `DS:0x5f5e` (`target_x` at `+0x04`, `target_y` at `+0x06`, `sprite` at `+0x08`, `sched_idx` at `+0x0e`).
+
 
 
