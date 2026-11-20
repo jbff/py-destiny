@@ -81,6 +81,8 @@ class EgaRenderer:
 
         if session.ztats_open:
             self._render_ztats(session)
+        elif session.combat is not None:
+            self._render_combat(session)
         else:
             fov = session.get_viewport_fov()
             for vy in range(11):
@@ -170,3 +172,19 @@ class EgaRenderer:
             EGA_PALETTE[11],
         )
         self.draw_text(12, 170, "Press Z to close", EGA_PALETTE[14])
+
+    def _render_combat(self, session: OverworldSession) -> None:
+        cbt = session.combat
+        if cbt is None:
+            return
+        for y in range(11):
+            for x in range(11):
+                tid = cbt.tiles[y][x]
+                if 0 <= tid < len(self.tiles):
+                    self.canvas.blit(self.tiles[tid], (8 + x * 16, 12 + y * 16))
+        for actor in cbt.actors:
+            if actor.alive and 0 <= actor.tile_id < len(self.tiles):
+                px, py = 8 + actor.x * 16, 12 + actor.y * 16
+                self.canvas.blit(self.tiles[actor.tile_id], (px, py))
+                if cbt.active_actor is actor:
+                    pygame.draw.rect(self.canvas, EGA_PALETTE[14], (px, py, 16, 16), 1)

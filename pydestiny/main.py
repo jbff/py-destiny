@@ -53,6 +53,24 @@ def main() -> None:
                         session.talk_input += event.unicode
                     continue
 
+                if session.combat is not None:
+                    if session.awaiting_attack_dir and event.key in DIR_KEYS:
+                        dx, dy = DIR_KEYS[event.key]
+                        session.combat.attack_dir(dx, dy)
+                        session.awaiting_attack_dir = False
+                        session.finish_combat_if_done()
+                    elif event.key in DIR_KEYS:
+                        dx, dy = DIR_KEYS[event.key]
+                        session.combat.move_active(dx, dy)
+                        session.finish_combat_if_done()
+                    elif event.key == pygame.K_a:
+                        session.awaiting_attack_dir = True
+                        session.log("Attack-dir?")
+                    elif event.key == pygame.K_SPACE:
+                        session.combat.pass_active()
+                        session.finish_combat_if_done()
+                    continue
+
                 if session.awaiting_look_dir and event.key in DIR_KEYS:
                     dx, dy = DIR_KEYS[event.key]
                     session.look_at(dx, dy)
@@ -74,6 +92,8 @@ def main() -> None:
                 elif event.key == pygame.K_l and not session.ztats_open:
                     session.awaiting_look_dir = True
                     session.log("Look-dir?")
+                elif event.key == pygame.K_F2 and not session.ztats_open:
+                    session.start_combat()
                 elif event.key == pygame.K_z:
                     session.ztats_open = not session.ztats_open
                 elif event.key == pygame.K_q:
