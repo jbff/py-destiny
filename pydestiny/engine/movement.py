@@ -29,3 +29,12 @@ def is_water_passable(tile_id: int) -> bool:
 def wrap_world_coord(x: int, y: int) -> tuple[int, int]:
     """Britannia and Underworld wrap toroidally on 256x256."""
     return x & 0xFF, y & 0xFF
+
+
+def terrain_move_minutes(tile_id: int) -> int:
+    """Return overworld time cost in minutes for stepping onto `tile_id`."""
+    if tile_id in (0x04, 0x0B, 0x0E, 0x0F):  # swamp, foothills
+        return 6
+    if tile_id in (0x06, 0x07, 0x08, 0x09, 0x0A, 0x1C, 0x1E, 0x1F):  # brush, desert, forest
+        return 4
+    return 2

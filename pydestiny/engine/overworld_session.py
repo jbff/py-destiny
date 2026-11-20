@@ -12,7 +12,7 @@ from pydestiny.engine.dungeon_session import DungeonSession
 from pydestiny.engine.fov import compute_fov
 from pydestiny.engine.karma import KARMA_LOCKPICK_SETTLEMENT, adjust_karma
 from pydestiny.engine.magic_effects import execute_spell
-from pydestiny.engine.movement import is_foot_passable, wrap_world_coord
+from pydestiny.engine.movement import is_foot_passable, terrain_move_minutes, wrap_world_coord
 from pydestiny.engine.phase7 import CharacterCreationState, StorySequence
 from pydestiny.engine.settlement import SettlementState
 from pydestiny.engine.shoppes import buy_shop_item, get_shop_menu
@@ -192,7 +192,10 @@ class OverworldSession:
             return False
         self.save.x = nx
         self.save.y = ny
-        advance_time(self.save, 2, self.tables.moon_phases)
+        mins = terrain_move_minutes(tile)
+        if mins >= 6:
+            self.log("Slow progress!")
+        advance_time(self.save, mins, self.tables.moon_phases)
         self.darkness = update_darkness(self.darkness, self.save.hour)
         return True
 
