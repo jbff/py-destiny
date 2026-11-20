@@ -184,6 +184,13 @@ Karma starts at `75` (`INIT.GAM+0x02e2`, `0..99` range) and is adjusted by playe
 2. Checks castability flags at `DATA.OVL+0x1ca0` (`DS:0x1c90` in code): bit `0x08` = Overworld (`location_id == 0`), bit `0x01` = Combat (`location_id >= 0x80`), and town/dungeon bits.
 3. Requires `prepared_count[spell_id] > 0` (`DS:0x57f0`) and `caster.mp >= circle`, then consumes 1 prepared spell and `circle` MP.
 
+## 17. 3D Dungeon Rendering (`DUNGEON.OVL`, `DNG1`–`DNG3.16`)
+
+- **Facing & Level**: `DS:[0x6603]` stores party facing (`0..3` = North/East/South/West); `DS:[0x5895] + 1` (`1..8`) is the dungeon depth.
+- **3D Perspective Slices**: `DNG1.16`, `DNG2.16`, and `DNG3.16` (and `.4` CGA equivalents) each decompress to `54,666` bytes containing **28 perspective wall/door/corridor sprites** (`uint32` offset table, widths `8`/`16`/`24`/`32` x height `164`).
+- **Ceiling & Floor (`DUNGEON.OVL+0x0332`)**: Fills the 3D viewport ceiling and floor (`0x0000:0x0aa6`) using style colors `DS:[0x13b2]` / `DS:[0x13b0]` selected by `location_id - 0x20`.
+
+
 
 
 
