@@ -92,15 +92,31 @@ Called from overworld/town/dungeon loops for `'A'..'Z'` commands (`'0'..'9'` go 
 ## 6. Magic & Reagent Mixing (`CMDS.OVL+0x1ad8`, `CAST.OVL`)
 
 - **Spell List (`DATA.OVL+0x0709`)**: 48 null-terminated spell names (8 circles x 6 spells, starting with `In Lor`, `Grav Por`, `An Zu`, `An Nox`, `Mani`, ...).
-- **Reagent Recipes (`DS:0x1cc0`)**: 48-byte bitmask table (1 byte per spell; bits `7..0` correspond to the 8 reagents at `DS:0x5850`).
+- **Reagent Recipes (`DATA.OVL+0x1cd0`)**: 48-byte bitmask table (1 byte per spell; bit `7` = Ash `0x80` down to bit `0` = Mandrake `0x01`, matching `DS:0x5850[0..7]`). Dumpable via [dump_tables.py](../tools/dump_tables.py).
 - **Mixing (`CMDS.OVL+0x1ad8`)**:
   1. Verifies total reagent count across `DS:0x5850..0x5857 > 0`.
   2. Prompts spell selection (`ZSTATS.OVL` via `0x808e`) and reagent selection (`0xd83e`), then computes max mixable quantity (`0xd9f0`).
-  3. Subtracts consumed reagents from `DS:0x5850[0..7]` and, if the reagent bitmask matches `DS:[0x1cc0 + spell_id]`, increments prepared count `DS:[0x57f0 + spell_id]` (capped at `0x63` = 99).
+  3. Subtracts consumed reagents from `DS:0x5850[0..7]` and, if the reagent bitmask matches the recipe (`DS:[0x1cc0 + spell_id]` in code / `DATA.OVL+0x1cd0`), increments prepared count `DS:[0x57f0 + spell_id]` (capped at `0x63` = 99).
 
 ## 7. Sound & Timing (`ULTIMA.EXE`)
 
 - **PC Speaker SFX (`0x0000:0x21fc`–`0x2315`)**: Drives the PC speaker directly via `in/out 0x61` (and PIT timer). The DOS version of Ultima V has PC speaker sound effects only (no AdLib/MT-32 music).
 - **Animation / Delay Tick (`0x0000:0x3ae6`)**: Runs `n` ticks of `0x0000:0x5910` (animation/world tick) + `0x0000:0x20fa(1)` (delay).
+
+## 8. Tile Passability (`0x0000:0x2bd4`, `0x2c2e`, `0x2c4c`)
+
+- **Transport Mode (`DS:0x54f4 + (actor_tile >> 2)`)**: Dispatches passability rules by transport/movement mode.
+- **Foot-Impassable Bitmask (`DATA.OVL+0x54d4`, 32 bytes = 256 bits)**:
+  - Bit `(0x80 >> (tile_id & 7))` in byte `tile_id >> 3`: `1` = blocked on foot, `0` = passable.
+  - Tiles `0x90..0x93` (doors/barriers) are additionally blocked unless `(mode & 0xfe) == 0x1c` or `(mode & 0xf0) == 0x40`.
+- **Water Passability (`0x0000:0x2c2e`)**: Returns `1` if `tile_id < 4` (water) or `(tile_id & 0xf0) == 0x60` (bridges/moongate/whirlpool).
+
+## 9. Monster & Actor Stat Table (`DATA.OVL+0x13cc`–`0x154b`)
+
+48 records x 8 bytes (`COMBAT.OVL+0x1480` indexes `0x13bc`/`0x13bf` in code, aligned to `DATA.OVL+0x13cc`):
+- Indices `0..15`: 16 human/NPC classes (including Blackthorn/Lord British at `13..15` with `30, 30, 30, 30, 99 HP`).
+- Indices `16..47`: 32 monster types (`Sea Horse`..`Shadow Lord`, names at `DATA.OVL+0x023e`).
+- Per-record 8-byte layout: `[STR, DEX, INT, ARM, DMG, HP, MaxSpawn, Special]`.
+- Combat actor state is stored in `DS:0xba16` (8 bytes per actor: `x` at `+0x04`, `y` at `+0x05`, type/index at `+0x02`–`+0x03`).
 
 
