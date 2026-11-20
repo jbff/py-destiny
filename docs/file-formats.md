@@ -41,10 +41,12 @@ Verified via [tools/lzw.py](../tools/lzw.py) across all 54 compressed `.16`, `.4
   - `0x000..0x0FF`: Literal byte
   - `0x102..0xFFF`: Dictionary entries
 - **Decompressed Container Layouts**:
-  - `TILES.16` (65,536 B): 512 tiles x 128 B (`16x16` @ 4bpp).
-  - `TILES.4` (32,768 B): 512 tiles x 64 B (`16x16` @ 2bpp).
-  - Other `.16`/`.4` files: `uint16 count`, followed by `count` x `uint32` offsets into the decompressed buffer.
+  - `TILES.16` (65,536 B): 512 tiles x 128 B (`16x16` packed 4bpp, 8 bytes/row, high nibble = left pixel, low nibble = right pixel; standard 16-color EGA palette).
+  - `TILES.4` (32,768 B): 512 tiles x 64 B (`16x16` packed 2bpp, 4 bytes/row).
+  - Large `.16`/`.4` containers (`CREATE.16`, `STARTSC.16`, `STORY1.16`–`STORY6.16`, etc.): `uint16 count`, followed by `count` x `uint32` offsets.
+  - Sprite/item `.16`/`.4` containers (`ITEMS.16`, `MON0.16`–`MON7.16`, etc.): `uint16 count`, followed by `count` pairs of `(uint16 image_off, uint16 mask_off)` (`2 + count * 4` bytes).
   - `TITLE.BIT`, `BRITISH.BIT`: `uint16 count`, followed by `count` x `uint16` offsets.
+  - Every sub-image inside `.16`/`.4`/`.BIT` begins with `(uint16 width, uint16 height)` followed by packed pixel data.
   - `WD.BIT` (uncompressed): `uint16 count` (`1`), `uint16 offset` (`4`), `uint16 width` (`288`), `uint16 height` (`49`), followed by 1bpp pixel data (`36 * 49 = 1764` bytes).
 
 ### 2. Dialogue Files (`*.TLK`)
@@ -76,5 +78,18 @@ Total size: 4,192 bytes (`0x1060`).
   - `+0x16`: `level` (`uint8`)
   - `+0x19`: party slot / membership (`0xFF` = not in party)
   - `+0x1A..0x1F`: equipped item slots (helm, armour, weapon, shield, ring, amulet)
+
+### 5. Settlement NPCs (`*.NPC`)
+
+`CASTLE.NPC`, `TOWNE.NPC`, `KEEP.NPC`, and `DWELLING.NPC` are 4,608 bytes each: **8 settlements x 576 bytes**:
+- **`+0x000..+0x1FF`** (512 B): 32 NPC schedule records x 16 bytes each (loaded into `DS:0x5f5e`):
+  - `+0x00..0x02`: `ai_type[3]` (3 daily schedule phases)
+  - `+0x03..0x05`: `x[3]` (`0..31`)
+  - `+0x06..0x08`: `y[3]` (`0..31`)
+  - `+0x09..0x0B`: `z[3]` (floor index)
+  - `+0x0C..0x0F`: `time[4]` (schedule transition hours)
+- **`+0x200..+0x21F`** (32 B): 32 x `uint8` NPC sprite/tile type (e.g. `0x70` = guard).
+- **`+0x220..+0x23F`** (32 B): 32 x `uint8` dialogue ID (`0x01..0x7F` = `.TLK` NPC ID, `0x80..0xFE` = shopkeeper/special, `0xFF` = generic guard/no dialogue).
+
 
 
