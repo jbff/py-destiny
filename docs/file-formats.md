@@ -100,12 +100,16 @@ Each combat map is **352 bytes (`11 rows x 32 bytes`)**:
   - `row[0..10]` (11 B): Tile IDs for the `11 x 11` tactical grid.
   - `row[11..31]` (21 B): Packed metadata — row 4 holds party spawn X coordinates (`party_start_x[6]`), row 5 holds up to 16 monster types, row 6 holds 16 monster X coordinates, and row 7 holds 16 monster Y coordinates.
 
-### 7. Misc Text & Data Files (`SHOPPE.DAT`, `KARMA.DAT`, `SIGNS.DAT`, `QUESTION.DAT`)
+### 7. Misc Text & Data Files (`SHOPPE.DAT`, `KARMA.DAT`, `SIGNS.DAT`, `QUESTION.DAT`, `LOOK2.DAT`, `STORY.DAT`, `END.DAT`, `MISCMSG.DAT`, `ENDMSG.DAT`, `MISCMAPS.DAT`)
 
 - **`SHOPPE.DAT`** (10,135 B): Null-terminated ASCII shopkeeper dialogue using the `DATA.OVL+0x24F8` word dictionary with bit 7 set (`0x80 + (word_idx - 9)`).
 - **`KARMA.DAT`** (761 B): Plain ASCII karma/shrine messages.
 - **`SIGNS.DAT`** (8,364 B): `uint16 count` (`0x0042`) + `uint16` offset table followed by sign text records.
-- **`QUESTION.DAT`** (7,746 B): Plain ASCII gypsy/virtue character-creation questions (`{`-delimited).
+- **`QUESTION.DAT`** (7,746 B), **`STORY.DAT`** (11,679 B), **`END.DAT`** (3,698 B): Plain ASCII `{`-delimited text blocks (character creation, intro story, endgame).
+- **`MISCMSG.DAT`** (2,745 B), **`ENDMSG.DAT`** (786 B): Plain ASCII shrine/mantra and endgame messages.
+- **`LOOK2.DAT`** (3,622 B): `512` x `uint16` offset table (`0x0400` bytes) followed by null-terminated tile descriptions for the `L`ook command.
+- **`MISCMAPS.DAT`** (1,871 B): Small tile maps (shrines/special scenes).
+- **`BRIT.OOL` / `UNDER.OOL` / `INIT.OOL` / `SAVED.OOL`**: `256` bytes per world (32 active object slots x 8 bytes, matching `DS:0x5c5a`); `SAVED.OOL` (`512` B) combines Britannia + Underworld.
 
 ### 8. Bitmap Fonts (`IBM.CH`, `RUNES.CH`)
 

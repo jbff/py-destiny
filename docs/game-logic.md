@@ -163,6 +163,15 @@ Called from overworld/town/dungeon loops for `'A'..'Z'` commands (`'0'..'9'` go 
   - Trammel position: `(8 - hour)` (wrapped `+24` if `< -12`), visible when `0 <= pos < 12`.
   - Felucca position: `(2 - hour)` (wrapped `+24` if `< -12`), visible when `0 <= pos < 12`.
 
+## 14. Karma Rules (`DS:[0x5888]`)
+
+Karma starts at `75` (`INIT.GAM+0x02e2`, `0..99` range) and is adjusted by player actions:
+- **Lockpicking / Opening owned doors or chests in settlements (`SJOG.OVL+0x11f0`)**: `-2` Karma (clamped `>= 0`) when `location_id <= 0x20`.
+- **Stealing / Getting owned items (`SJOG.OVL+0x1a50`)**: `-1` Karma and alerts guards (`DS:[0xa9fa] = 1`).
+- **Attacking friendly NPCs (`TOWN.OVL+0x0ae8`)**: `-5` Karma (via `0x0000:0x3f36`, saturating at `0`) and turns town hostile (`0x8b28`).
+- Additional Karma modifiers exist in `BLCKTHRN.OVL`, `CAST2.OVL`, `CMDS.OVL`, `SHOPPES2.OVL`, and `TALK.OVL` (dialogue choices, shrine meditation, donations).
+
+
 
 
 
