@@ -11,7 +11,7 @@ This plan outlines an incremental, machine-code-faithful Python reimplementation
 
 1. **One small, verifiable slice at a time**: Every phase produces a runnable, testable deliverable rather than a monolithic rewrite.
 2. **Machine-code fidelity**: Behavior is derived from `ULTIMA.EXE` / `*.OVL` disassembly and `DATA.OVL` tables. Whenever a detail is not yet documented, we return to the original binaries before coding.
-3. **Runtime asset loading from `orig/extracted/`**: Original copyrighted graphics, maps, and text are read at runtime from `orig/extracted/` (never committed to git).
+3. **Open extracted data (`data/`) & JSON saves**: Original files remain untouched in `orig/` (gitignored). All game tables, maps, NPCs, dialogues, text, and initial state are extracted once via `tools/extract_data.py` into open JSON under `data/` (committed for clones), and save games use JSON (`SaveGame.save_json()` / `load_json()`).
 4. **Test-driven data & rules**: Every parser, decompressor, and formula is unit-tested against the original binary files.
 
 ---

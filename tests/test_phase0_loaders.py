@@ -149,3 +149,17 @@ class TestPhase0Loaders:
         assert sg.karma == 75
         assert sg.location_id == 13
         assert sg.x == 15 and sg.y == 15
+
+
+def test_savegame_json_round_trip(tmp_path) -> None:
+    from pathlib import Path
+
+    init_json = Path(__file__).resolve().parent.parent / "data" / "init_save.json"
+    sg = SaveGame.load_json(init_json)
+    out_path = tmp_path / "save.json"
+    sg.save_json(out_path)
+    sg2 = SaveGame.load_json(out_path)
+    assert sg2.to_dict() == sg.to_dict()
+    assert sg2.characters[1].name == "Shamino"
+    assert sg2.karma == 75
+

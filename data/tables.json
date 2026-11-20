@@ -1,0 +1,1356 @@
+{
+  "spells": [
+    {
+      "index": 0,
+      "circle": 1,
+      "name": "In Lor",
+      "reagent_mask": 128,
+      "context_flags": 14
+    },
+    {
+      "index": 1,
+      "circle": 1,
+      "name": "Grav Por",
+      "reagent_mask": 132,
+      "context_flags": 1
+    },
+    {
+      "index": 2,
+      "circle": 1,
+      "name": "An Zu",
+      "reagent_mask": 96,
+      "context_flags": 15
+    },
+    {
+      "index": 3,
+      "circle": 1,
+      "name": "An Nox",
+      "reagent_mask": 96,
+      "context_flags": 15
+    },
+    {
+      "index": 4,
+      "circle": 1,
+      "name": "Mani",
+      "reagent_mask": 80,
+      "context_flags": 15
+    },
+    {
+      "index": 5,
+      "circle": 1,
+      "name": "An Ylem",
+      "reagent_mask": 40,
+      "context_flags": 5
+    },
+    {
+      "index": 6,
+      "circle": 2,
+      "name": "An Sanct",
+      "reagent_mask": 136,
+      "context_flags": 15
+    },
+    {
+      "index": 7,
+      "circle": 2,
+      "name": "An Xen Cor",
+      "reagent_mask": 160,
+      "context_flags": 1
+    },
+    {
+      "index": 8,
+      "circle": 2,
+      "name": "Rel Hur",
+      "reagent_mask": 136,
+      "context_flags": 8
+    },
+    {
+      "index": 9,
+      "circle": 2,
+      "name": "In Wis",
+      "reagent_mask": 2,
+      "context_flags": 8
+    },
+    {
+      "index": 10,
+      "circle": 2,
+      "name": "Kal Xen",
+      "reagent_mask": 17,
+      "context_flags": 1
+    },
+    {
+      "index": 11,
+      "circle": 2,
+      "name": "In Xen Man",
+      "reagent_mask": 97,
+      "context_flags": 15
+    },
+    {
+      "index": 12,
+      "circle": 3,
+      "name": "Vas Lor",
+      "reagent_mask": 129,
+      "context_flags": 14
+    },
+    {
+      "index": 13,
+      "circle": 3,
+      "name": "Vas Flam",
+      "reagent_mask": 132,
+      "context_flags": 1
+    },
+    {
+      "index": 14,
+      "circle": 3,
+      "name": "In Flam Gr",
+      "reagent_mask": 148,
+      "context_flags": 3
+    },
+    {
+      "index": 15,
+      "circle": 3,
+      "name": "In Nox Gr",
+      "reagent_mask": 22,
+      "context_flags": 3
+    },
+    {
+      "index": 16,
+      "circle": 3,
+      "name": "In Zu Grav",
+      "reagent_mask": 84,
+      "context_flags": 3
+    },
+    {
+      "index": 17,
+      "circle": 3,
+      "name": "In Por",
+      "reagent_mask": 24,
+      "context_flags": 9
+    },
+    {
+      "index": 18,
+      "circle": 4,
+      "name": "An Grav",
+      "reagent_mask": 132,
+      "context_flags": 3
+    },
+    {
+      "index": 19,
+      "circle": 4,
+      "name": "In Sanct",
+      "reagent_mask": 224,
+      "context_flags": 15
+    },
+    {
+      "index": 20,
+      "circle": 4,
+      "name": "In Sanct G",
+      "reagent_mask": 21,
+      "context_flags": 3
+    },
+    {
+      "index": 21,
+      "circle": 4,
+      "name": "Uus Por",
+      "reagent_mask": 24,
+      "context_flags": 2
+    },
+    {
+      "index": 22,
+      "circle": 4,
+      "name": "Des Por",
+      "reagent_mask": 24,
+      "context_flags": 2
+    },
+    {
+      "index": 23,
+      "circle": 4,
+      "name": "Wis Quas",
+      "reagent_mask": 18,
+      "context_flags": 1
+    },
+    {
+      "index": 24,
+      "circle": 5,
+      "name": "In Bet Xen",
+      "reagent_mask": 152,
+      "context_flags": 1
+    },
+    {
+      "index": 25,
+      "circle": 5,
+      "name": "An Ex Por",
+      "reagent_mask": 168,
+      "context_flags": 5
+    },
+    {
+      "index": 26,
+      "circle": 5,
+      "name": "In Ex Por",
+      "reagent_mask": 136,
+      "context_flags": 5
+    },
+    {
+      "index": 27,
+      "circle": 5,
+      "name": "Vas Mani",
+      "reagent_mask": 81,
+      "context_flags": 15
+    },
+    {
+      "index": 28,
+      "circle": 5,
+      "name": "In Zu",
+      "reagent_mask": 82,
+      "context_flags": 1
+    },
+    {
+      "index": 29,
+      "circle": 5,
+      "name": "Rel Tym",
+      "reagent_mask": 137,
+      "context_flags": 15
+    },
+    {
+      "index": 30,
+      "circle": 6,
+      "name": "In Vas P Y",
+      "reagent_mask": 137,
+      "context_flags": 1
+    },
+    {
+      "index": 31,
+      "circle": 6,
+      "name": "Quas An Wi",
+      "reagent_mask": 3,
+      "context_flags": 1
+    },
+    {
+      "index": 32,
+      "circle": 6,
+      "name": "In An",
+      "reagent_mask": 161,
+      "context_flags": 15
+    },
+    {
+      "index": 33,
+      "circle": 6,
+      "name": "Wis An Yle",
+      "reagent_mask": 129,
+      "context_flags": 12
+    },
+    {
+      "index": 34,
+      "circle": 6,
+      "name": "An Xen Ex",
+      "reagent_mask": 22,
+      "context_flags": 1
+    },
+    {
+      "index": 35,
+      "circle": 6,
+      "name": "Rel Xen Be",
+      "reagent_mask": 147,
+      "context_flags": 1
+    },
+    {
+      "index": 36,
+      "circle": 7,
+      "name": "Sanct Lo",
+      "reagent_mask": 11,
+      "context_flags": 1
+    },
+    {
+      "index": 37,
+      "circle": 7,
+      "name": "Xen Corp",
+      "reagent_mask": 6,
+      "context_flags": 1
+    },
+    {
+      "index": 38,
+      "circle": 7,
+      "name": "In Quas Xe",
+      "reagent_mask": 217,
+      "context_flags": 1
+    },
+    {
+      "index": 39,
+      "circle": 7,
+      "name": "In Quas Wi",
+      "reagent_mask": 3,
+      "context_flags": 14
+    },
+    {
+      "index": 40,
+      "circle": 7,
+      "name": "In Nox Hur",
+      "reagent_mask": 138,
+      "context_flags": 1
+    },
+    {
+      "index": 41,
+      "circle": 7,
+      "name": "In Quas Co",
+      "reagent_mask": 35,
+      "context_flags": 1
+    },
+    {
+      "index": 42,
+      "circle": 8,
+      "name": "In Mani Co",
+      "reagent_mask": 249,
+      "context_flags": 14
+    },
+    {
+      "index": 43,
+      "circle": 8,
+      "name": "Kal Xen Co",
+      "reagent_mask": 57,
+      "context_flags": 1
+    },
+    {
+      "index": 44,
+      "circle": 8,
+      "name": "In Vas G C",
+      "reagent_mask": 131,
+      "context_flags": 1
+    },
+    {
+      "index": 45,
+      "circle": 8,
+      "name": "In Flam Hu",
+      "reagent_mask": 137,
+      "context_flags": 1
+    },
+    {
+      "index": 46,
+      "circle": 8,
+      "name": "Vas Rel Po",
+      "reagent_mask": 133,
+      "context_flags": 14
+    },
+    {
+      "index": 47,
+      "circle": 8,
+      "name": "An Tym",
+      "reagent_mask": 41,
+      "context_flags": 15
+    }
+  ],
+  "monsters": [
+    {
+      "index": 0,
+      "name": "Mage",
+      "strength": 10,
+      "dexterity": 15,
+      "intelligence": 20,
+      "armour": 0,
+      "damage": 15,
+      "hp": 10,
+      "max_spawn": 3,
+      "special": 20
+    },
+    {
+      "index": 1,
+      "name": "Bard",
+      "strength": 15,
+      "dexterity": 20,
+      "intelligence": 10,
+      "armour": 4,
+      "damage": 12,
+      "hp": 15,
+      "max_spawn": 9,
+      "special": 10
+    },
+    {
+      "index": 2,
+      "name": "Fighter",
+      "strength": 20,
+      "dexterity": 15,
+      "intelligence": 10,
+      "armour": 8,
+      "damage": 15,
+      "hp": 20,
+      "max_spawn": 6,
+      "special": 15
+    },
+    {
+      "index": 3,
+      "name": "Avatar",
+      "strength": 25,
+      "dexterity": 25,
+      "intelligence": 25,
+      "armour": 7,
+      "damage": 30,
+      "hp": 20,
+      "max_spawn": 1,
+      "special": 25
+    },
+    {
+      "index": 4,
+      "name": "Villager",
+      "strength": 12,
+      "dexterity": 12,
+      "intelligence": 12,
+      "armour": 0,
+      "damage": 6,
+      "hp": 8,
+      "max_spawn": 1,
+      "special": 10
+    },
+    {
+      "index": 5,
+      "name": "Merchant",
+      "strength": 12,
+      "dexterity": 12,
+      "intelligence": 18,
+      "armour": 0,
+      "damage": 6,
+      "hp": 8,
+      "max_spawn": 1,
+      "special": 10
+    },
+    {
+      "index": 6,
+      "name": "Jester",
+      "strength": 12,
+      "dexterity": 18,
+      "intelligence": 12,
+      "armour": 0,
+      "damage": 6,
+      "hp": 8,
+      "max_spawn": 1,
+      "special": 10
+    },
+    {
+      "index": 7,
+      "name": "Bard",
+      "strength": 12,
+      "dexterity": 16,
+      "intelligence": 14,
+      "armour": 0,
+      "damage": 6,
+      "hp": 8,
+      "max_spawn": 1,
+      "special": 10
+    },
+    {
+      "index": 8,
+      "name": "Child",
+      "strength": 12,
+      "dexterity": 12,
+      "intelligence": 12,
+      "armour": 0,
+      "damage": 0,
+      "hp": 5,
+      "max_spawn": 1,
+      "special": 0
+    },
+    {
+      "index": 9,
+      "name": "Beggar",
+      "strength": 12,
+      "dexterity": 12,
+      "intelligence": 12,
+      "armour": 0,
+      "damage": 0,
+      "hp": 5,
+      "max_spawn": 1,
+      "special": 0
+    },
+    {
+      "index": 10,
+      "name": "Guard",
+      "strength": 8,
+      "dexterity": 8,
+      "intelligence": 8,
+      "armour": 0,
+      "damage": 0,
+      "hp": 5,
+      "max_spawn": 1,
+      "special": 0
+    },
+    {
+      "index": 11,
+      "name": "Wanderer",
+      "strength": 8,
+      "dexterity": 8,
+      "intelligence": 8,
+      "armour": 0,
+      "damage": 0,
+      "hp": 5,
+      "max_spawn": 1,
+      "special": 0
+    },
+    {
+      "index": 12,
+      "name": "Blackthorn",
+      "strength": 22,
+      "dexterity": 30,
+      "intelligence": 10,
+      "armour": 6,
+      "damage": 30,
+      "hp": 99,
+      "max_spawn": 8,
+      "special": 5
+    },
+    {
+      "index": 13,
+      "name": "Lord British",
+      "strength": 30,
+      "dexterity": 30,
+      "intelligence": 30,
+      "armour": 30,
+      "damage": 99,
+      "hp": 99,
+      "max_spawn": 1,
+      "special": 0
+    },
+    {
+      "index": 14,
+      "name": "Sea Horse",
+      "strength": 30,
+      "dexterity": 30,
+      "intelligence": 30,
+      "armour": 30,
+      "damage": 30,
+      "hp": 99,
+      "max_spawn": 1,
+      "special": 0
+    },
+    {
+      "index": 15,
+      "name": "NPC_15",
+      "strength": 30,
+      "dexterity": 30,
+      "intelligence": 30,
+      "armour": 30,
+      "damage": 99,
+      "hp": 99,
+      "max_spawn": 1,
+      "special": 0
+    },
+    {
+      "index": 16,
+      "name": "Sea Horse",
+      "strength": 17,
+      "dexterity": 20,
+      "intelligence": 20,
+      "armour": 2,
+      "damage": 10,
+      "hp": 30,
+      "max_spawn": 3,
+      "special": 0
+    },
+    {
+      "index": 17,
+      "name": "Squid",
+      "strength": 24,
+      "dexterity": 20,
+      "intelligence": 8,
+      "armour": 0,
+      "damage": 20,
+      "hp": 50,
+      "max_spawn": 2,
+      "special": 0
+    },
+    {
+      "index": 18,
+      "name": "Sea Serpent",
+      "strength": 17,
+      "dexterity": 17,
+      "intelligence": 8,
+      "armour": 2,
+      "damage": 30,
+      "hp": 70,
+      "max_spawn": 1,
+      "special": 0
+    },
+    {
+      "index": 19,
+      "name": "Shark",
+      "strength": 20,
+      "dexterity": 17,
+      "intelligence": 5,
+      "armour": 0,
+      "damage": 8,
+      "hp": 22,
+      "max_spawn": 10,
+      "special": 0
+    },
+    {
+      "index": 20,
+      "name": "Giant Rat",
+      "strength": 5,
+      "dexterity": 20,
+      "intelligence": 5,
+      "armour": 0,
+      "damage": 6,
+      "hp": 10,
+      "max_spawn": 10,
+      "special": 5
+    },
+    {
+      "index": 21,
+      "name": "Bat",
+      "strength": 5,
+      "dexterity": 30,
+      "intelligence": 5,
+      "armour": 0,
+      "damage": 6,
+      "hp": 5,
+      "max_spawn": 16,
+      "special": 0
+    },
+    {
+      "index": 22,
+      "name": "Giant Spider",
+      "strength": 10,
+      "dexterity": 10,
+      "intelligence": 5,
+      "armour": 0,
+      "damage": 8,
+      "hp": 10,
+      "max_spawn": 4,
+      "special": 5
+    },
+    {
+      "index": 23,
+      "name": "Ghost",
+      "strength": 1,
+      "dexterity": 20,
+      "intelligence": 10,
+      "armour": 0,
+      "damage": 12,
+      "hp": 20,
+      "max_spawn": 6,
+      "special": 0
+    },
+    {
+      "index": 24,
+      "name": "Slime",
+      "strength": 6,
+      "dexterity": 6,
+      "intelligence": 2,
+      "armour": 0,
+      "damage": 4,
+      "hp": 10,
+      "max_spawn": 16,
+      "special": 0
+    },
+    {
+      "index": 25,
+      "name": "Gremlin",
+      "strength": 10,
+      "dexterity": 21,
+      "intelligence": 10,
+      "armour": 2,
+      "damage": 4,
+      "hp": 10,
+      "max_spawn": 13,
+      "special": 12
+    },
+    {
+      "index": 26,
+      "name": "Mimic",
+      "strength": 20,
+      "dexterity": 30,
+      "intelligence": 12,
+      "armour": 3,
+      "damage": 15,
+      "hp": 30,
+      "max_spawn": 1,
+      "special": 20
+    },
+    {
+      "index": 27,
+      "name": "Reaper",
+      "strength": 20,
+      "dexterity": 25,
+      "intelligence": 12,
+      "armour": 4,
+      "damage": 20,
+      "hp": 40,
+      "max_spawn": 3,
+      "special": 25
+    },
+    {
+      "index": 28,
+      "name": "Gazer",
+      "strength": 8,
+      "dexterity": 10,
+      "intelligence": 25,
+      "armour": 0,
+      "damage": 10,
+      "hp": 20,
+      "max_spawn": 4,
+      "special": 0
+    },
+    {
+      "index": 29,
+      "name": "Crawler",
+      "strength": 17,
+      "dexterity": 15,
+      "intelligence": 12,
+      "armour": 0,
+      "damage": 15,
+      "hp": 35,
+      "max_spawn": 4,
+      "special": 0
+    },
+    {
+      "index": 30,
+      "name": "Gargoyle",
+      "strength": 20,
+      "dexterity": 10,
+      "intelligence": 5,
+      "armour": 15,
+      "damage": 20,
+      "hp": 40,
+      "max_spawn": 1,
+      "special": 0
+    },
+    {
+      "index": 31,
+      "name": "Insect Swarm",
+      "strength": 1,
+      "dexterity": 30,
+      "intelligence": 1,
+      "armour": 0,
+      "damage": 4,
+      "hp": 5,
+      "max_spawn": 10,
+      "special": 0
+    },
+    {
+      "index": 32,
+      "name": "Orc",
+      "strength": 15,
+      "dexterity": 13,
+      "intelligence": 10,
+      "armour": 2,
+      "damage": 12,
+      "hp": 10,
+      "max_spawn": 10,
+      "special": 11
+    },
+    {
+      "index": 33,
+      "name": "Skeleton",
+      "strength": 10,
+      "dexterity": 20,
+      "intelligence": 5,
+      "armour": 0,
+      "damage": 12,
+      "hp": 20,
+      "max_spawn": 8,
+      "special": 13
+    },
+    {
+      "index": 34,
+      "name": "Python",
+      "strength": 5,
+      "dexterity": 18,
+      "intelligence": 8,
+      "armour": 1,
+      "damage": 8,
+      "hp": 10,
+      "max_spawn": 4,
+      "special": 0
+    },
+    {
+      "index": 35,
+      "name": "Ettin",
+      "strength": 20,
+      "dexterity": 15,
+      "intelligence": 12,
+      "armour": 3,
+      "damage": 15,
+      "hp": 30,
+      "max_spawn": 6,
+      "special": 17
+    },
+    {
+      "index": 36,
+      "name": "Headless",
+      "strength": 19,
+      "dexterity": 12,
+      "intelligence": 8,
+      "armour": 2,
+      "damage": 12,
+      "hp": 20,
+      "max_spawn": 8,
+      "special": 12
+    },
+    {
+      "index": 37,
+      "name": "Wisp",
+      "strength": 8,
+      "dexterity": 30,
+      "intelligence": 20,
+      "armour": 0,
+      "damage": 20,
+      "hp": 40,
+      "max_spawn": 4,
+      "special": 0
+    },
+    {
+      "index": 38,
+      "name": "Daemon",
+      "strength": 25,
+      "dexterity": 25,
+      "intelligence": 25,
+      "armour": 5,
+      "damage": 20,
+      "hp": 75,
+      "max_spawn": 4,
+      "special": 0
+    },
+    {
+      "index": 39,
+      "name": "Dragon",
+      "strength": 30,
+      "dexterity": 25,
+      "intelligence": 25,
+      "armour": 10,
+      "damage": 30,
+      "hp": 99,
+      "max_spawn": 2,
+      "special": 30
+    },
+    {
+      "index": 40,
+      "name": "Sand Trap",
+      "strength": 25,
+      "dexterity": 25,
+      "intelligence": 5,
+      "armour": 10,
+      "damage": 30,
+      "hp": 80,
+      "max_spawn": 1,
+      "special": 25
+    },
+    {
+      "index": 41,
+      "name": "Troll",
+      "strength": 18,
+      "dexterity": 17,
+      "intelligence": 9,
+      "armour": 4,
+      "damage": 15,
+      "hp": 15,
+      "max_spawn": 4,
+      "special": 15
+    },
+    {
+      "index": 42,
+      "name": "Unused_42",
+      "strength": 0,
+      "dexterity": 0,
+      "intelligence": 0,
+      "armour": 0,
+      "damage": 0,
+      "hp": 0,
+      "max_spawn": 0,
+      "special": 0
+    },
+    {
+      "index": 43,
+      "name": "Unused_43",
+      "strength": 0,
+      "dexterity": 0,
+      "intelligence": 0,
+      "armour": 0,
+      "damage": 0,
+      "hp": 0,
+      "max_spawn": 0,
+      "special": 0
+    },
+    {
+      "index": 44,
+      "name": "Mongbat",
+      "strength": 10,
+      "dexterity": 30,
+      "intelligence": 15,
+      "armour": 4,
+      "damage": 20,
+      "hp": 20,
+      "max_spawn": 16,
+      "special": 5
+    },
+    {
+      "index": 45,
+      "name": "Corpser",
+      "strength": 17,
+      "dexterity": 10,
+      "intelligence": 8,
+      "armour": 0,
+      "damage": 15,
+      "hp": 40,
+      "max_spawn": 4,
+      "special": 0
+    },
+    {
+      "index": 46,
+      "name": "Rot Worm",
+      "strength": 5,
+      "dexterity": 17,
+      "intelligence": 6,
+      "armour": 0,
+      "damage": 6,
+      "hp": 5,
+      "max_spawn": 10,
+      "special": 0
+    },
+    {
+      "index": 47,
+      "name": "Shadow Lord",
+      "strength": 25,
+      "dexterity": 30,
+      "intelligence": 30,
+      "armour": 10,
+      "damage": 30,
+      "hp": 99,
+      "max_spawn": 1,
+      "special": 0
+    }
+  ],
+  "item_names": [
+    "Leather Helm",
+    "Spiked Helm",
+    "Small Shield",
+    "Large Shield",
+    "Spiked Shield",
+    "Magic Shield",
+    "Jewel Shield",
+    "Cloth Armour",
+    "Leather Armour",
+    "Scale Mail",
+    "Chain Mail",
+    "Plate Mail",
+    "Mystic Armour",
+    "Flaming Oil",
+    "Main Gauche",
+    "Throwing Axe",
+    "Short Sword",
+    "Morning Star",
+    "Sword of Chaos",
+    "Silver Sword",
+    "Glass Sword",
+    "Jeweled Sword",
+    "Mystic Sword",
+    "Ring of Invisibility",
+    "Ring of Protection",
+    "Ring of Regeneration",
+    "Amulet/Turning",
+    "Spiked Collar"
+  ],
+  "item_attack": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    6,
+    6,
+    8,
+    8,
+    8,
+    10,
+    10,
+    12,
+    15,
+    15,
+    10,
+    1,
+    12,
+    1,
+    15,
+    20,
+    20,
+    20,
+    30,
+    99,
+    15,
+    12,
+    20,
+    99,
+    1,
+    30,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    16,
+    30,
+    99,
+    18,
+    0,
+    21,
+    0,
+    0
+  ],
+  "item_defense": [
+    1,
+    2,
+    3,
+    3,
+    2,
+    3,
+    3,
+    5,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    7,
+    10,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    2,
+    0,
+    0,
+    2,
+    0
+  ],
+  "item_range": [
+    0,
+    0,
+    0,
+    8,
+    0,
+    0,
+    8,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    7,
+    8,
+    3,
+    0,
+    0,
+    2,
+    0,
+    8,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    8,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "foot_impassable_tiles": [
+    2,
+    10,
+    18,
+    33,
+    35,
+    38,
+    39,
+    41,
+    42,
+    43,
+    45,
+    49,
+    50,
+    55,
+    57,
+    58,
+    59,
+    62,
+    65,
+    66,
+    67,
+    69,
+    70,
+    73,
+    74,
+    76,
+    79,
+    81,
+    82,
+    84,
+    85,
+    86,
+    89,
+    90,
+    93,
+    94,
+    95,
+    98,
+    103,
+    108,
+    110,
+    129,
+    130,
+    131,
+    140,
+    141,
+    154,
+    156,
+    167,
+    168,
+    169,
+    170,
+    171,
+    174,
+    175,
+    184,
+    186,
+    187,
+    188,
+    189,
+    191,
+    193,
+    194,
+    195,
+    198,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    209,
+    210,
+    211,
+    212,
+    213,
+    214,
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221,
+    222,
+    223,
+    224,
+    225,
+    226,
+    227,
+    228,
+    229,
+    230,
+    231,
+    232,
+    233,
+    236,
+    237,
+    238,
+    239,
+    240,
+    241,
+    242,
+    243,
+    244,
+    245,
+    246,
+    247,
+    248,
+    249,
+    250,
+    251,
+    252,
+    253,
+    254,
+    255
+  ],
+  "opaque_tiles": [
+    9,
+    10,
+    12,
+    13,
+    77,
+    78,
+    79,
+    90,
+    151,
+    184,
+    185,
+    188,
+    208,
+    209,
+    210,
+    211,
+    248,
+    254,
+    255
+  ],
+  "moon_phases": [
+    [
+      192,
+      80
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      3,
+      5
+    ],
+    [
+      4,
+      6
+    ],
+    [
+      5,
+      7
+    ],
+    [
+      5,
+      0
+    ],
+    [
+      6,
+      0
+    ],
+    [
+      6,
+      1
+    ],
+    [
+      7,
+      2
+    ],
+    [
+      7,
+      3
+    ],
+    [
+      0,
+      4
+    ],
+    [
+      1,
+      5
+    ],
+    [
+      1,
+      6
+    ],
+    [
+      2,
+      7
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      3,
+      0
+    ],
+    [
+      3,
+      1
+    ],
+    [
+      4,
+      2
+    ],
+    [
+      5,
+      3
+    ],
+    [
+      5,
+      4
+    ],
+    [
+      6,
+      5
+    ],
+    [
+      6,
+      6
+    ],
+    [
+      7,
+      7
+    ],
+    [
+      7,
+      0
+    ]
+  ]
+}

@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import struct
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 SAVED_GAM_SIZE = 4192
@@ -245,3 +246,85 @@ class SaveGame:
     @y.setter
     def y(self, val: int) -> None:
         self.raw[0x02F1] = val & 0xFF
+
+    def to_dict(self) -> dict[str, object]:
+        """Export human-readable JSON-serializable save state."""
+        chars = []
+        for ch in self.characters:
+            d = asdict(ch)
+            d["equipped"] = list(ch.equipped)
+            chars.append(d)
+        return {
+            "characters": chars,
+            "food": self.food,
+            "gold": self.gold,
+            "keys": self.keys,
+            "gems": self.gems,
+            "torches": self.torches,
+            "equipment": list(self.equipment),
+            "prepared_spells": list(self.prepared_spells),
+            "reagents": list(self.reagents),
+            "year": self.year,
+            "month": self.month,
+            "day": self.day,
+            "hour": self.hour,
+            "minute": self.minute,
+            "active_spell": self.active_spell,
+            "karma": self.karma,
+            "location_id": self.location_id,
+            "z": self.z,
+            "x": self.x,
+            "y": self.y,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, object]) -> SaveGame:
+        """Create a SaveGame from a JSON dict (starting from zeroed 4,192B backing)."""
+        sg = cls(bytes(SAVED_GAM_SIZE))
+        chars_data = data["characters"]  # type: ignore[index]
+        for i, cd in enumerate(chars_data[:16]):  # type: ignore[arg-type]
+            sg.characters[i] = CharacterRecord(
+                name=str(cd["name"]),
+                gender=int(cd["gender"]),
+                char_class=str(cd["char_class"]),
+                status=str(cd["status"]),
+                strength=int(cd["strength"]),
+                dexterity=int(cd["dexterity"]),
+                intelligence=int(cd["intelligence"]),
+                mp=int(cd["mp"]),
+                hp=int(cd["hp"]),
+                max_hp=int(cd["max_hp"]),
+                exp=int(cd["exp"]),
+                level=int(cd["level"]),
+                months_in_party=int(cd["months_in_party"]),
+                unknown_18=int(cd.get("unknown_18", 0)),
+                party_slot=int(cd["party_slot"]),
+                equipped=bytearray(cd["equipped"]),
+            )
+        sg.food = int(data["food"])  # type: ignore[arg-type]
+        sg.gold = int(data["gold"])  # type: ignore[arg-type]
+        sg.keys = int(data["keys"])  # type: ignore[arg-type]
+        sg.gems = int(data["gems"])  # type: ignore[arg-type]
+        sg.torches = int(data["torches"])  # type: ignore[arg-type]
+        sg.equipment[:] = bytes(data["equipment"])  # type: ignore[arg-type]
+        sg.prepared_spells[:] = bytes(data["prepared_spells"])  # type: ignore[arg-type]
+        sg.reagents[:] = bytes(data["reagents"])  # type: ignore[arg-type]
+        sg.year = int(data["year"])  # type: ignore[arg-type]
+        sg.month = int(data["month"])  # type: ignore[arg-type]
+        sg.day = int(data["day"])  # type: ignore[arg-type]
+        sg.hour = int(data["hour"])  # type: ignore[arg-type]
+        sg.minute = int(data["minute"])  # type: ignore[arg-type]
+        sg.active_spell = int(data.get("active_spell", 0))  # type: ignore[arg-type]
+        sg.karma = int(data["karma"])  # type: ignore[arg-type]
+        sg.location_id = int(data["location_id"])  # type: ignore[arg-type]
+        sg.z = int(data["z"])  # type: ignore[arg-type]
+        sg.x = int(data["x"])  # type: ignore[arg-type]
+        sg.y = int(data["y"])  # type: ignore[arg-type]
+        return sg
+
+    def save_json(self, path: Path) -> None:
+        path.write_text(json.dumps(self.to_dict(), indent=2) + "\n", encoding="utf-8")
+
+    @classmethod
+    def load_json(cls, path: Path) -> SaveGame:
+        return cls.from_dict(json.loads(path.read_text(encoding="utf-8")))
