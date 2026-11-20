@@ -100,6 +100,13 @@ Each combat map is **352 bytes (`11 rows x 32 bytes`)**:
   - `row[0..10]` (11 B): Tile IDs for the `11 x 11` tactical grid.
   - `row[11..31]` (21 B): Packed metadata — row 4 holds party spawn X coordinates (`party_start_x[6]`), row 5 holds up to 16 monster types, row 6 holds 16 monster X coordinates, and row 7 holds 16 monster Y coordinates.
 
+### 7. Misc Text & Data Files (`SHOPPE.DAT`, `KARMA.DAT`, `SIGNS.DAT`, `QUESTION.DAT`)
+
+- **`SHOPPE.DAT`** (10,135 B): Null-terminated ASCII shopkeeper dialogue using the `DATA.OVL+0x24F8` word dictionary with bit 7 set (`0x80 + (word_idx - 9)`).
+- **`KARMA.DAT`** (761 B): Plain ASCII karma/shrine messages.
+- **`SIGNS.DAT`** (8,364 B): `uint16 count` (`0x0042`) + `uint16` offset table followed by sign text records.
+- **`QUESTION.DAT`** (7,746 B): Plain ASCII gypsy/virtue character-creation questions (`{`-delimited).
+
 
 
 

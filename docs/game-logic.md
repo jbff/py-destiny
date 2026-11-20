@@ -14,12 +14,14 @@ Notes from disassembling `ULTIMA.EXE` and `*.OVL` overlays. All `DS:` offsets ar
 | `0x57f0` | `+0x024a` | 48 B | Prepared spell counts (48 spells, capped at `99`) |
 | `0x5850` | `+0x02aa` | 8 B | Reagents (Ash, Ginseng, Garlic, Silk, Moss, Pearl, Nightshade, Mandrake) |
 | `0x5874` | `+0x02ce` | 2 B | Year (`uint16`, starts at `139`) |
-| `0x587d` | `+0x02d7` | 4 B | Month, Day, Hour, Minute (`uint8` each) |
+| `0x587a` | `+0x02d4` | 1 B | Active spell effect (`'Q'` Quicken, `'T'` Time Stop, etc.) |
+| `0x587d` | `+0x02d7` | 5 B | Month (`1..13`), Day (`1..28`), Hour (`0..23`), PrevHour, Minute (`0..59`) |
 | `0x5888` | `+0x02e2` | 1 B | Karma (`uint8`, starts at `75`) |
 | `0x5893` | `+0x02ed` | 1 B | Location ID (`0` = Overworld, `1..32` = Settlements, `33+` = Dungeons) |
 | `0x5895` | `+0x02ef` | 1 B | `z` / World (`0` = Britannia, `0xff` = Underworld; floor index in settlements) |
 | `0x5896` | `+0x02f0` | 1 B | Party `x` coordinate |
 | `0x5897` | `+0x02f1` | 1 B | Party `y` coordinate |
+| `0x58a6` | `+0x0300` | 2 B | Active spell duration (`0x58a6`) and torch duration (`0x58a7`) |
 | `0x595a` | `+0x03b4` | 512 B | Current dungeon map (`8 levels x 8 x 8` cells; `((z & 0xff) << 6) | (y << 3) | x`) |
 | `0x5c5a` | `+0x06b4` | 256 B | Active map objects / monsters / vehicles (32 slots x 8 bytes) |
 | `0x5d5e` | `+0x07b8` | 512 B | Settlement NPC schedule table from `*.NPC` (32 NPCs x 16 bytes) |
@@ -139,6 +141,19 @@ Called from overworld/town/dungeon loops for `'A'..'Z'` commands (`'0'..'9'` go 
 - `NPC.OVL+0x00d6(hour)` iterates NPCs `1..31` (skipping entries where `DS:[0x659e + npc_idx] == 0`):
   1. Resolves active schedule slot (`0..2`) for `hour` via `0xb570(hour, npc_idx)`.
   2. Copies `(x, y, z)` from `DS:0x5d5e` (`*.NPC` schedule record) into runtime NPC state `DS:0x5f5e` (`target_x` at `+0x04`, `target_y` at `+0x06`, `sprite` at `+0x08`, `sched_idx` at `+0x0e`).
+
+## 12. Time, Calendar & Active Spell Effects (`0x0000:0x4f7c`)
+
+`advance_time(minutes)`:
+1. If `DS:[0x587a] == 'Q'` (Quicken): halves `minutes` (clamped `>= 1`).
+2. If `DS:[0x587a] != 'T'` (Time Stop freezes time):
+   - Adds `minutes` to `DS:[0x5881]` (minute) and decrements `DS:[0x58a6]` (spell duration) and `DS:[0x58a7]` (torch duration).
+3. **Rollover**:
+   - `minute > 59`: subtracts `60`, decrements `DS:[0x588c]`, increments `hour` (`DS:[0x587f]`).
+   - `hour > 23`: resets `hour = 0`, increments `day` (`DS:[0x587e]`).
+   - `day > 28` (`0x1c`): resets `day = 1`, clears monthly flags (`DS:0x5858..0x585a`, `0x57b2`, `0x5959`), increments `char[+0x17]` (months in party, capped at `25`) for all 16 characters, and increments `month` (`DS:[0x587d]`).
+   - `month > 13` (`0x0d`): resets `month = 1` and increments `year` (`DS:[0x5874]`).
+
 
 
 
