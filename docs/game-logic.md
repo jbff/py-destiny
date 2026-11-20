@@ -171,6 +171,20 @@ Karma starts at `75` (`INIT.GAM+0x02e2`, `0..99` range) and is adjusted by playe
 - **Attacking friendly NPCs (`TOWN.OVL+0x0ae8`)**: `-5` Karma (via `0x0000:0x3f36`, saturating at `0`) and turns town hostile (`0x8b28`).
 - Additional Karma modifiers exist in `BLCKTHRN.OVL`, `CAST2.OVL`, `CMDS.OVL`, `SHOPPES2.OVL`, and `TALK.OVL` (dialogue choices, shrine meditation, donations).
 
+## 15. Lighting, Darkness & Viewport (`0x0000:0x475a`, `0x5910`)
+
+- **Day / Night Darkness (`DS:[0x5887]`)**:
+  - Nighttime (`hour >= 20` or `hour < 5`): increments `DS:[0x5887]` up to `16` (`0x10`).
+  - Daytime (`5 <= hour < 20`): decrements `DS:[0x5887]` down to `0` (full visibility radius `5`, `11 x 11` viewport).
+- **Light Sources (`DS:0x5830`, `DS:0x5838`, `DS:[0x58a5]`)**: Up to 8 map light sources plus party torch/spell radius `DS:[0x58a5]` are evaluated before rendering the `11 x 11` viewport (`0x0000:0x70a6`); occluded/unlit tiles in the viewport buffer are marked `0xFF`.
+
+## 16. Spell Casting Rules (`CAST.OVL+0x0dba`)
+
+1. Prompts for caster and spell (`0..47`), computing `circle = (spell_id // 6) + 1` and storing `circle` in `DS:[0x588f]`.
+2. Checks castability flags at `DATA.OVL+0x1ca0` (`DS:0x1c90` in code): bit `0x08` = Overworld (`location_id == 0`), bit `0x01` = Combat (`location_id >= 0x80`), and town/dungeon bits.
+3. Requires `prepared_count[spell_id] > 0` (`DS:0x57f0`) and `caster.mp >= circle`, then consumes 1 prepared spell and `circle` MP.
+
+
 
 
 
