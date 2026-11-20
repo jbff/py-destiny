@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from pydestiny import DEFAULT_ORIG_DIR
+from pydestiny.assets.graphics import load_font_8x8
 from pydestiny.assets.maps import (
     load_brit_map,
     load_combat_maps,
@@ -144,7 +145,17 @@ def extract_all(orig: Path = DEFAULT_ORIG_DIR, out: Path = DEFAULT_OUT_DIR) -> N
             encoding="utf-8",
         )
 
-    # 5. Initial save -> data/init_save.json
+    # 5. Fonts -> data/font_ibm.json, data/font_runes.json
+    (out / "font_ibm.json").write_text(
+        json.dumps([list(g) for g in load_font_8x8(orig / "IBM.CH")]),
+        encoding="utf-8",
+    )
+    (out / "font_runes.json").write_text(
+        json.dumps([list(g) for g in load_font_8x8(orig / "RUNES.CH")]),
+        encoding="utf-8",
+    )
+
+    # 6. Initial save -> data/init_save.json
     sg = SaveGame.from_file(orig / "__support" / "save" / "INIT.GAM")
     sg.save_json(out / "init_save.json")
     print(f"Extracted all open JSON assets to {out}")
