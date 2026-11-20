@@ -74,12 +74,15 @@ def test_full_game_simulation_trace(tmp_path) -> None:
         sim.act("talk_bye", lambda: session.submit_talk("bye"))
         assert session.talk_session is None
 
-        # Open chest & jimmy locked door
+        # Open chest, search barrel, & jimmy locked door
         session.settlement.current_floor(0)[15][15] = 0x8F
         session.settlement.current_floor(0)[15][17] = 0xB8
+        session.settlement.current_floor(0)[16][16] = 0xA6  # oaken barrel
         session.save.x, session.save.y = 16, 15
         session.save.keys = 2
         assert sim.act("open_chest", lambda: session.open_at(-1, 0))
+        assert "5 food" in sim.act("search_barrel", lambda: session.search_at(0, 1))
+        assert "Nothing" in sim.act("search_barrel_again", lambda: session.search_at(0, 1))
         assert sim.act("jimmy_door", lambda: session.jimmy_door(1, 0))
 
         sim.act("exit_lb_castle", session.exit_settlement)

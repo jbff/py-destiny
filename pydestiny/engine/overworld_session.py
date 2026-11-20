@@ -58,6 +58,7 @@ class OverworldSession:
         self.story_seq: StorySequence | None = None
         self.char_create: CharacterCreationState | None = None
         self.endgame_won = False
+        self._searched_coords: set[tuple[int, int, int, int]] = set()
         self.quit_requested = False
         self.settlement: SettlementState | None = None
         self.dungeon: DungeonSession | None = None
@@ -396,8 +397,30 @@ class OverworldSession:
         return False
 
     def search_at(self, dx: int, dy: int) -> str:
-        desc = self.look_at(dx, dy)
-        return desc
+        tx, ty = self.save.x + dx, self.save.y + dy
+        tile = self.get_tile(tx, ty)
+        key = (self.save.location_id, self.save.z, tx, ty)
+        if key in self._searched_coords:
+            msg = "Nothing found!"
+        elif tile == 0xA6:  # oaken barrel
+            self._searched_coords.add(key)
+            self.save.food = min(9999, self.save.food + 5)
+            msg = "Found 5 food!"
+        elif tile == 0xAD:  # chest of drawers
+            self._searched_coords.add(key)
+            self.save.gold += 10
+            msg = "Found 10 gold!"
+        elif tile == 0x2B:  # hollow stump
+            self._searched_coords.add(key)
+            self.save.gems = min(99, self.save.gems + 1)
+            msg = "Found a gem!"
+        elif tile in (0x5C, 0x5D):  # bookshelf
+            self._searched_coords.add(key)
+            msg = "Old tomes."
+        else:
+            msg = "Nothing found!"
+        self.log(msg)
+        return msg
 
     def shop_buy(self, slot_idx: int) -> tuple[bool, str]:
         _, items = get_shop_menu(self.shop_talk_id)
