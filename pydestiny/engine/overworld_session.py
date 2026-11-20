@@ -211,6 +211,8 @@ class OverworldSession:
                 self.log(f"Entering loc #{loc_id}")
                 return True
         for dng_idx, coord in enumerate(self.tables.location_coords[32:40]):
+            if (dng_idx == 7 and self.save.z < 0x80) or (dng_idx < 7 and self.save.z >= 0x80):
+                continue
             if coord == pos:
                 self.dungeon = DungeonSession.load(dng_idx, self.data_dir)
                 self.save.location_id = 33 + dng_idx
