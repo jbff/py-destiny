@@ -9,6 +9,7 @@ import pygame
 
 from pydestiny.assets.graphics import EGA_PALETTE
 from pydestiny.assets.open_data import DEFAULT_DATA_DIR
+from pydestiny.engine.dungeon_session import FACING_NAMES, is_door_cell, is_wall_cell
 from pydestiny.engine.fov import UNSEEN_TILE
 from pydestiny.engine.overworld_session import AVATAR_TILE_ID, OverworldSession
 from pydestiny.engine.shoppes import DEFAULT_SHOP_MENU
@@ -28,6 +29,8 @@ class EgaRenderer:
         assets_dir: Path = DEFAULT_ASSETS_DIR,
         data_dir: Path = DEFAULT_DATA_DIR,
     ) -> None:
+        self.assets_dir = assets_dir
+        self._dng_cache: dict[int, dict[int, pygame.Surface]] = {}
         self.canvas = pygame.Surface((SCREEN_W, SCREEN_H))
         sheet = pygame.image.load(str(assets_dir / "tiles.png")).convert()
         self.tiles: list[pygame.Surface] = []
@@ -86,6 +89,8 @@ class EgaRenderer:
             self._render_shop(session)
         elif session.combat is not None:
             self._render_combat(session)
+        elif session.dungeon is not None:
+            self._render_dungeon(session)
         else:
             fov = session.get_viewport_fov()
             for vy in range(11):
@@ -204,3 +209,83 @@ class EgaRenderer:
             )
             y += 12
         self.draw_text(12, 168, "1-9 Buy  Esc Exit", EGA_PALETTE[11])
+
+    def _get_dng_slices(self, style: int) -> dict[int, pygame.Surface]:
+        if style not in self._dng_cache:
+            dng_dir = self.assets_dir / "dng"
+            loaded: dict[int, pygame.Surface] = {}
+            for idx in range(28):
+                p = dng_dir / f"dng{style}_{idx:02d}.png"
+                if p.exists():
+                    loaded[idx] = pygame.image.load(str(p)).convert_alpha()
+            self._dng_cache[style] = loaded
+        return self._dng_cache[style]
+
+    def _render_dungeon(self, session: OverworldSession) -> None:
+        dng = session.dungeon
+        if dng is None:
+            return
+        slices = self._get_dng_slices(dng.style)
+        vx, vy = 16, 18  # 160x164 centered inside 176x176 viewport
+        pygame.draw.rect(self.canvas, (0, 0, 0), (8, 12, 176, 176))
+
+        left_x = (0, 24, 56, 72)
+        right_x = (136, 104, 88, 80)
+        front_x = (0, 24, 56, 72)
+        front_wall_idx = (12, 9, 10, 11)
+        front_door_idx = (12, 25, 26, 27)
+
+        view = dng.view_slices(max_depth=3)
+        # Draw back-to-front (d=3..0)
+        for d in range(3, -1, -1):
+            _, left_c, center_c, right_c = view[d]
+            if is_wall_cell(left_c) or is_door_cell(left_c):
+                idx = (16 + d) if is_door_cell(left_c) else d
+                if idx in slices:
+                    self.canvas.blit(slices[idx], (vx + left_x[d], vy))
+            if is_wall_cell(right_c) or is_door_cell(right_c):
+                idx = (20 + d) if is_door_cell(right_c) else (4 + d)
+                if idx in slices:
+                    self.canvas.blit(slices[idx], (vx + right_x[d], vy))
+            if d >= 1 and (is_wall_cell(center_c) or is_door_cell(center_c)):
+                idx = front_door_idx[d] if is_door_cell(center_c) else front_wall_idx[d]
+                if idx in slices:
+                    img = slices[idx]
+                    self.canvas.blit(img, (vx + front_x[d], vy))
+                    self.canvas.blit(
+                        pygame.transform.flip(img, True, False),
+                        (vx + 80, vy),
+                    )
+            # Draw simple perspective markers for ladders/chests/pits in open cells
+            hi = center_c & 0xF0
+            if hi in (0x10, 0x20, 0x30, 0x40, 0x50, 0x60) and d <= 2:
+                half_w = (18, 10, 5)[d]
+                cx = vx + 80
+                if hi in (0x10, 0x30):  # Ladder up
+                    top_y = vy + (14, 38, 58)[d]
+                    bot_y = vy + (82, 82, 82)[d]
+                    pygame.draw.line(self.canvas, EGA_PALETTE[6], (cx - half_w // 2, top_y), (cx - half_w // 2, bot_y), 1)
+                    pygame.draw.line(self.canvas, EGA_PALETTE[6], (cx + half_w // 2, top_y), (cx + half_w // 2, bot_y), 1)
+                    for ry in range(top_y + 4, bot_y, 6):
+                        pygame.draw.line(self.canvas, EGA_PALETTE[14], (cx - half_w // 2, ry), (cx + half_w // 2, ry), 1)
+                if hi in (0x20, 0x30):  # Ladder down
+                    top_y = vy + 82
+                    bot_y = vy + (150, 126, 106)[d]
+                    pygame.draw.line(self.canvas, EGA_PALETTE[6], (cx - half_w // 2, top_y), (cx - half_w // 2, bot_y), 1)
+                    pygame.draw.line(self.canvas, EGA_PALETTE[6], (cx + half_w // 2, top_y), (cx + half_w // 2, bot_y), 1)
+                    for ry in range(top_y + 4, bot_y, 6):
+                        pygame.draw.line(self.canvas, EGA_PALETTE[14], (cx - half_w // 2, ry), (cx + half_w // 2, ry), 1)
+                if hi == 0x40:  # Chest
+                    fy = vy + (138, 118, 100)[d]
+                    pygame.draw.rect(self.canvas, EGA_PALETTE[6], (cx - half_w, fy - half_w // 2, half_w * 2, half_w))
+                    pygame.draw.rect(self.canvas, EGA_PALETTE[14], (cx - half_w, fy - half_w // 2, half_w * 2, half_w), 1)
+                elif hi == 0x60:  # Pit
+                    fy = vy + (142, 120, 100)[d]
+                    pygame.draw.ellipse(self.canvas, EGA_PALETTE[8], (cx - half_w, fy - 3, half_w * 2, 6), 1)
+
+        self.draw_text(
+            12,
+            18,
+            f"{dng.name} L{dng.z + 1} {FACING_NAMES[dng.facing]}",
+            EGA_PALETTE[14],
+        )

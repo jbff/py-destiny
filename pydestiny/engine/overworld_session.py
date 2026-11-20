@@ -8,6 +8,7 @@ from pathlib import Path
 from pydestiny.assets.open_data import DEFAULT_DATA_DIR, OpenTables, load_open_grid, load_open_tables
 from pydestiny.engine.combat_session import CombatSession
 from pydestiny.engine.dialogue import TalkSession
+from pydestiny.engine.dungeon_session import DungeonSession
 from pydestiny.engine.fov import compute_fov
 from pydestiny.engine.karma import KARMA_LOCKPICK_SETTLEMENT, adjust_karma
 from pydestiny.engine.magic_effects import execute_spell
@@ -50,11 +51,17 @@ class OverworldSession:
         self.talk_input: str = ""
         self.quit_requested = False
         self.settlement: SettlementState | None = None
+        self.dungeon: DungeonSession | None = None
         if 1 <= save.location_id <= 32:
             base_idx = tables.settlement_base_maps[save.location_id - 1]
             self.settlement = SettlementState.load(
                 save.location_id, save.hour, base_idx, data_dir
             )
+        elif 33 <= save.location_id <= 40:
+            self.dungeon = DungeonSession.load(save.location_id - 33, data_dir)
+            self.dungeon.x = save.x
+            self.dungeon.y = save.y
+            self.dungeon.z = save.z
 
     @classmethod
     def from_data_dir(
@@ -122,6 +129,32 @@ class OverworldSession:
         return get_moon_phases(self.save.day, self.tables.moon_phases)
 
     def step_move(self, dx: int, dy: int) -> bool:
+        if self.dungeon is not None:
+            if dx < 0:
+                self.dungeon.turn_left()
+                return True
+            if dx > 0:
+                self.dungeon.turn_right()
+                return True
+            moved, event = self.dungeon.step(forward=(dy < 0))
+            if not moved:
+                self.log("Blocked!")
+                return False
+            self.save.x = self.dungeon.x
+            self.save.y = self.dungeon.y
+            self.save.z = self.dungeon.z
+            advance_time(self.save, 2, self.tables.moon_phases)
+            if event.startswith("room:"):
+                room_id = int(event.split(":", 1)[1])
+                self.start_dungeon_room(room_id)
+            elif event == "pit":
+                self.log("A pit!")
+            elif event == "chest":
+                self.log("A chest!")
+            elif event == "fountain":
+                self.log("A fountain!")
+            return True
+
         if self.settlement is not None:
             nx, ny = self.save.x + dx, self.save.y + dy
             if not (0 <= nx < 32 and 0 <= ny < 32):
@@ -155,7 +188,7 @@ class OverworldSession:
         return True
 
     def enter_location(self) -> bool:
-        if self.settlement is not None:
+        if self.settlement is not None or self.dungeon is not None:
             self.log("Not here!")
             return False
         pos = (self.save.x, self.save.y)
@@ -172,8 +205,55 @@ class OverworldSession:
                 )
                 self.log(f"Entering loc #{loc_id}")
                 return True
+        for dng_idx, coord in enumerate(self.tables.location_coords[32:40]):
+            if coord == pos:
+                self.dungeon = DungeonSession.load(dng_idx, self.data_dir)
+                self.save.location_id = 33 + dng_idx
+                self.save.x = self.dungeon.x
+                self.save.y = self.dungeon.y
+                self.save.z = 0
+                self.log(f"Entering {self.dungeon.name}")
+                return True
         self.log("Nothing to enter!")
         return False
+
+    def exit_dungeon(self) -> None:
+        if self.dungeon is None:
+            return
+        dng_idx = self.dungeon.dungeon_idx
+        ox, oy = self.tables.location_coords[32 + dng_idx]
+        self.dungeon = None
+        self.save.location_id = 0
+        self.save.z = 0
+        self.save.x = ox
+        self.save.y = oy
+        self.log("Exiting to Britannia")
+
+    def klimb_dungeon(self, up: bool = True) -> bool:
+        if self.dungeon is None:
+            return False
+        res = self.dungeon.klimb(up=up)
+        if res == "exit":
+            self.exit_dungeon()
+            return True
+        if res in ("up", "down"):
+            self.save.z = self.dungeon.z
+            self.log(f"Level {self.dungeon.z + 1}")
+            return True
+        self.log("Not here!")
+        return False
+
+    def start_dungeon_room(self, room_id: int) -> CombatSession:
+        cbt_maps = json.loads(
+            (self.data_dir / "maps" / "dungeon_cbt.json").read_text(encoding="utf-8")
+        )
+        dng_idx = self.dungeon.dungeon_idx if self.dungeon is not None else 0
+        cbt_idx = min(dng_idx * 16 + room_id, len(cbt_maps) - 1)
+        self.combat = CombatSession.from_cbt_dict(
+            self.save, self.tables, cbt_maps[cbt_idx], default_monster_idx=32
+        )
+        self.log(f"Dungeon room {room_id}!")
+        return self.combat
 
     def exit_settlement(self) -> None:
         if self.settlement is None:

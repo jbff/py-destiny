@@ -99,8 +99,16 @@ def main() -> None:
                 elif event.key == pygame.K_l and not session.ztats_open:
                     session.awaiting_look_dir = True
                     session.log("Look-dir?")
+                elif event.key == pygame.K_k and not session.ztats_open and session.dungeon is not None:
+                    session.klimb_dungeon(up=True)
+                elif event.key == pygame.K_d and not session.ztats_open and session.dungeon is not None:
+                    session.klimb_dungeon(up=False)
                 elif event.key == pygame.K_F2 and not session.ztats_open:
                     session.start_combat()
+                elif event.key == pygame.K_F3 and not session.ztats_open and session.dungeon is None:
+                    ox, oy = session.tables.location_coords[32]
+                    session.save.x, session.save.y = ox, oy
+                    session.enter_location()
                 elif event.key == pygame.K_z:
                     session.ztats_open = not session.ztats_open
                 elif event.key == pygame.K_q:
